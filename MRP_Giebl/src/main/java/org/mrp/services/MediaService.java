@@ -1,12 +1,8 @@
 package org.mrp.services;
 
-import at.favre.lib.crypto.bcrypt.BCrypt;
 import com.sun.net.httpserver.HttpExchange;
-import org.mrp.models.Rating;
-import org.mrp.models.User;
 import org.mrp.utils.JsonHelper;
 
-import javax.print.attribute.standard.Media;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.Arrays;
@@ -34,11 +30,12 @@ public class MediaService {
                 releaseYearString == null || releaseYearString.trim().isEmpty() ||
                 ageRestrictionString == null || ageRestrictionString.trim().isEmpty() ||
                 genreString == null || genreString.trim().isEmpty()) {
-            JsonHelper.sendError(exchange, 400, "media information required");
+            JsonHelper.sendError(exchange, 400, "complete media information required");
             return;
         }
 
-        //parse info is valid
+
+        //parse info if valid
         int releaseYear = Integer.parseInt(releaseYearString);
         int ageRestriction = Integer.parseInt(ageRestrictionString);
         List<String> genres = Arrays.asList(genreString.split(","));
@@ -51,7 +48,7 @@ public class MediaService {
 
         //response
         Map<String, Object> response = new HashMap<>();
-        response.put("message", "User registered successfully");
+        response.put("message", "Media Entry created successfully");
 
         JsonHelper.sendResponse(exchange, 201, response);
     }
