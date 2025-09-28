@@ -1,0 +1,35 @@
+package org.mrp.handlers;
+
+import com.sun.net.httpserver.HttpExchange;
+import com.sun.net.httpserver.HttpHandler;
+import org.mrp.services.AuthService;
+import org.mrp.utils.JsonHelper;
+
+import java.io.IOException;
+
+
+public class AuthHandler implements HttpHandler {
+
+    @Override
+    public void handle(HttpExchange exchange) throws IOException {
+        String method = exchange.getRequestMethod();
+        String path = exchange.getRequestURI().getPath();
+        AuthService authService = new AuthService();
+
+        try {
+            if (path.endsWith("/register") && "POST".equals(method)) {
+                authService.register(exchange);
+            } else if (path.endsWith("/login") && "POST".equals(method)) {
+                authService.login(exchange);
+            } else {
+                JsonHelper.sendError(exchange, 404, "Endpoint not found");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            JsonHelper.sendError(exchange, 500, "Internal server error");
+        }
+    }
+
+}
+
+
