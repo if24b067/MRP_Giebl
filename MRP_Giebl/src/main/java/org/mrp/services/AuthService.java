@@ -3,6 +3,7 @@ package org.mrp.services;
 import at.favre.lib.crypto.bcrypt.BCrypt;
 import com.sun.net.httpserver.HttpExchange;
 import org.mrp.models.User;
+import org.mrp.repositories.UserRepository;
 import org.mrp.utils.JsonHelper;
 
 import java.io.IOException;
@@ -20,8 +21,14 @@ public class AuthService {
         Map<String, String> request = JsonHelper.parseRequest(exchange, HashMap.class);
         String username = request.get("username");
         String password = request.get("password");
+        UserRepository userRepository = new UserRepository();
 
         //validate input
+        if(userRepository.chkUsername(username)) {
+            JsonHelper.sendError(exchange, 400, "Username already exists");
+            return;
+        }
+
         if (username == null || username.trim().isEmpty() ||
                 password == null || password.trim().isEmpty()) {
             JsonHelper.sendError(exchange, 400, "Username and password are required");
@@ -38,22 +45,16 @@ public class AuthService {
             return;
         }
 
-        //check if username already exists
-//        if (db.exists("SELECT 1 FROM users WHERE username = ?", username)) {
-//            JsonHelper.sendError(exchange, 400, "Username already exists");
-//            return;
-//        }
-
         //hash password
-        String passwordHash = BCrypt.withDefaults().hashToString(12, password.toCharArray());
-
-        //insert user with UUID
-//        UUID userId = db.insert(
-//                "INSERT INTO users (id, username, password_hash) VALUES (?, ?, ?)",
-//                username, passwordHash
-//        );
-
+        String pwHash = BCrypt.withDefaults().hashToString(12, password.toCharArray());
+        //create Timestamp
+        Timestamp createdAt = new Timestamp(System.currentTimeMillis());
+        //tmp hilfswert UUID
         String userId = "0189e8c6-6b1b-7def-b95b-6f2b8cdffd5a";
+
+        User user = new User(userId, username, pwHash, createdAt);
+        userRepository.saveUser(user);
+
 
         //response
         Map<String, Object> response = new HashMap<>();
@@ -68,12 +69,8 @@ public class AuthService {
         Map<String, String> request = JsonHelper.parseRequest(exchange, HashMap.class);
         String username = request.get("username");
         String password = request.get("password");
+        UserRepository userRepository = new UserRepository();
 
-
-        //get username and pw from db to check input
-        //for now hardcoded test input
-        String testName = "max";
-        String testPw = "1234";
 
         //validate input
         if (username == null || username.trim().isEmpty() ||
@@ -82,10 +79,11 @@ public class AuthService {
             return;
         }
 
-        if (!username.equals(testName) || !password.equals(testPw)) {
+        if(userRepository.chkLogin(username, password)) {
             JsonHelper.sendError(exchange, 400, "Username or password are invalid");
             return;
         }
+
 
         String token = username + "_" + UUID.randomUUID().toString();
 

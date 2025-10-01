@@ -5,6 +5,7 @@ import java.sql.Timestamp;
 import java.util.List;
 
 public class MediaEntry {
+    private String id;
     private String title;
     private String desc;
     private User creator;

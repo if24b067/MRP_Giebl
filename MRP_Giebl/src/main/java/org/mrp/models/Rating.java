@@ -3,6 +3,7 @@ package org.mrp.models;
 import java.sql.Timestamp;
 
 public class Rating {
+    private String id;
     private User creator;
     private MediaEntry mediaEntry;
     private int starValue;
