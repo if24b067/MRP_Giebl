@@ -9,12 +9,16 @@ import java.io.IOException;
 
 
 public class AuthHandler implements HttpHandler {
+    private AuthService authService;
+
+    public AuthHandler() {
+        this.authService = new AuthService();
+    }
 
     @Override
     public void handle(HttpExchange exchange) throws IOException {
         String method = exchange.getRequestMethod();
         String path = exchange.getRequestURI().getPath();
-        AuthService authService = new AuthService();
 
         try {
             if (path.endsWith("/register") && "POST".equals(method)) {

@@ -9,6 +9,12 @@ import org.mrp.utils.JsonHelper;
 import java.io.IOException;
 
 public class MediaHandler implements HttpHandler {
+    private MediaService mediaService;
+
+    public MediaHandler() {
+        this.mediaService = new MediaService();
+    }
+
     @Override
     public void handle(HttpExchange exchange) throws IOException {
         String method = exchange.getRequestMethod();

@@ -3,10 +3,12 @@ package org.mrp.models;
 import java.sql.Timestamp;
 
 public class User {
+    //UUID statt String
     private String id;
     private String username;
     private String passwordHash;
     private Timestamp createdAt;
+    //private String token;
 
 
     public User() {}

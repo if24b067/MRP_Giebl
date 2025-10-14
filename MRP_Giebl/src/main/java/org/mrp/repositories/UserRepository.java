@@ -11,24 +11,17 @@ public class UserRepository {
 
     //chk whether username already exists
     public boolean chkUsername(String username) {
-        return Objects.equals(username, "max");
-        //check if username already exists
-//        if (db.exists("SELECT 1 FROM users WHERE username = ?", username)) {
-//            JsonHelper.sendError(exchange, 400, "Username already exists");
-//            return;
-//        }
+        return Objects.equals(username, "Max");
+        //chk with db
     }
 
     public boolean chkLogin(String username, String password) {
-        return Objects.equals(username, "max") && Objects.equals(password, "1234");
+        return Objects.equals(username, "Max") && Objects.equals(password, "1234");
+        //chk with db
     }
 
     //save information in db
     public void saveUser(User user) {
-        //insert user with UUID
-//        UUID userId = db.insert(
-//                "INSERT INTO users (id, username, password_hash) VALUES (?, ?, ?)",
-//                user.id, user.username, user.passwordHash, user.createdAt
-//        );
+        //save to db
     }
 }

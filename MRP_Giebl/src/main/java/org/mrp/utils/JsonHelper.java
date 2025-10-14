@@ -11,6 +11,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 
+//remove static
 public class JsonHelper {
     private static final ObjectMapper mapper = new ObjectMapper();
 

@@ -79,7 +79,7 @@ public class AuthService {
             return;
         }
 
-        if(userRepository.chkLogin(username, password)) {
+        if(!userRepository.chkLogin(username, password)) {
             JsonHelper.sendError(exchange, 400, "Username or password are invalid");
             return;
         }
