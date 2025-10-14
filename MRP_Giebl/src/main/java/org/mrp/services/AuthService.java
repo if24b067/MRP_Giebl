@@ -53,7 +53,7 @@ public class AuthService {
         String userId = "0189e8c6-6b1b-7def-b95b-6f2b8cdffd5a";
 
         User user = new User(userId, username, pwHash, createdAt);
-        userRepository.saveUser(user);
+        userRepository.save(user);
 
 
         //response

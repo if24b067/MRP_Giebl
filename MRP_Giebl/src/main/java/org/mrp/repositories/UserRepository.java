@@ -4,7 +4,7 @@ import org.mrp.models.User;
 
 import java.util.Objects;
 
-public class UserRepository {
+public class UserRepository implements Repository{
 
     public UserRepository() {
     }
@@ -21,7 +21,18 @@ public class UserRepository {
     }
 
     //save information in db
-    public void saveUser(User user) {
+    @Override
+    public void save(User user) {
+        //save to db
+    }
+
+    @Override
+    public void update() {
+        //save to db
+    }
+
+    @Override
+    public void delete() {
         //save to db
     }
 }
