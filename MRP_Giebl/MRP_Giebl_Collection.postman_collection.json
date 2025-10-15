@@ -74,6 +74,378 @@
 			"response": []
 		},
 		{
+			"name": "login invalid empty",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 400\", function () {\r",
+							"    pm.response.to.have.status(400);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Response is JSON\", function () {\r",
+							"    pm.response.to.have.header(\"Content-Type\");\r",
+							"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\");\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Response has required fields\", function () {\r",
+							"    pm.expect(pm.response.json()).to.have.property(\"error\");\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Response fields have correct types\", function () {\r",
+							"    pm.expect(pm.response.json().error).to.be.a(\"string\");\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Error message is present\", function () {\r",
+							"    pm.expect(pm.response.json().error).to.include(\"required\");\r",
+							"});\r",
+							"\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {},
+						"requests": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n\t\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseURL}}/api/auth/login",
+					"host": [
+						"{{baseURL}}"
+					],
+					"path": [
+						"api",
+						"auth",
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "login invalid empty username",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 400\", function () {\r",
+							"    pm.response.to.have.status(400);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Response is JSON\", function () {\r",
+							"    pm.response.to.have.header(\"Content-Type\");\r",
+							"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\");\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Response has required fields\", function () {\r",
+							"    pm.expect(pm.response.json()).to.have.property(\"error\");\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Response fields have correct types\", function () {\r",
+							"    pm.expect(pm.response.json().error).to.be.a(\"string\");\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Error message is present\", function () {\r",
+							"    pm.expect(pm.response.json().error).to.include(\"required\");\r",
+							"});\r",
+							"\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {},
+						"requests": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n\t\"password\": \"1234\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseURL}}/api/auth/login",
+					"host": [
+						"{{baseURL}}"
+					],
+					"path": [
+						"api",
+						"auth",
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "login invalid empty password",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 400\", function () {\r",
+							"    pm.response.to.have.status(400);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Response is JSON\", function () {\r",
+							"    pm.response.to.have.header(\"Content-Type\");\r",
+							"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\");\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Response has required fields\", function () {\r",
+							"    pm.expect(pm.response.json()).to.have.property(\"error\");\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Response fields have correct types\", function () {\r",
+							"    pm.expect(pm.response.json().error).to.be.a(\"string\");\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Error message is present\", function () {\r",
+							"    pm.expect(pm.response.json().error).to.include(\"required\");\r",
+							"});\r",
+							"\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {},
+						"requests": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n\t\"username\": \"Max\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseURL}}/api/auth/login",
+					"host": [
+						"{{baseURL}}"
+					],
+					"path": [
+						"api",
+						"auth",
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "login invalid pwd",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 400\", function () {\r",
+							"    pm.response.to.have.status(400);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Response is JSON\", function () {\r",
+							"    pm.response.to.have.header(\"Content-Type\");\r",
+							"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\");\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Response has required fields\", function () {\r",
+							"    pm.expect(pm.response.json()).to.have.property(\"error\");\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Response fields have correct types\", function () {\r",
+							"    pm.expect(pm.response.json().error).to.be.a(\"string\");\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Error message is present\", function () {\r",
+							"    pm.expect(pm.response.json().error).to.include(\"invalid\");\r",
+							"});\r",
+							"\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {},
+						"requests": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n\t\"username\": \"Max\",\r\n    \"password\": \"123\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseURL}}/api/auth/login",
+					"host": [
+						"{{baseURL}}"
+					],
+					"path": [
+						"api",
+						"auth",
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "login invalid username",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 400\", function () {\r",
+							"    pm.response.to.have.status(400);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Response is JSON\", function () {\r",
+							"    pm.response.to.have.header(\"Content-Type\");\r",
+							"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\");\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Response has required fields\", function () {\r",
+							"    pm.expect(pm.response.json()).to.have.property(\"error\");\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Response fields have correct types\", function () {\r",
+							"    pm.expect(pm.response.json().error).to.be.a(\"string\");\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Error message is present\", function () {\r",
+							"    pm.expect(pm.response.json().error).to.include(\"invalid\");\r",
+							"});\r",
+							"\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {},
+						"requests": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n\t\"username\": \"max\",\r\n    \"password\": \"1234\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseURL}}/api/auth/login",
+					"host": [
+						"{{baseURL}}"
+					],
+					"path": [
+						"api",
+						"auth",
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "login invalid",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 400\", function () {\r",
+							"    pm.response.to.have.status(400);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Response is JSON\", function () {\r",
+							"    pm.response.to.have.header(\"Content-Type\");\r",
+							"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\");\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Response has required fields\", function () {\r",
+							"    pm.expect(pm.response.json()).to.have.property(\"error\");\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Response fields have correct types\", function () {\r",
+							"    pm.expect(pm.response.json().error).to.be.a(\"string\");\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Error message is present\", function () {\r",
+							"    pm.expect(pm.response.json().error).to.include(\"invalid\");\r",
+							"});\r",
+							"\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {},
+						"requests": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n\t\"username\": \"max\",\r\n    \"password\": \"123\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseURL}}/api/auth/login",
+					"host": [
+						"{{baseURL}}"
+					],
+					"path": [
+						"api",
+						"auth",
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
 			"name": "register success",
 			"event": [
 				{
@@ -148,7 +520,7 @@
 			"response": []
 		},
 		{
-			"name": "login invalid pwd",
+			"name": "register invalid empty",
 			"event": [
 				{
 					"listen": "test",
@@ -171,8 +543,8 @@
 							"    pm.expect(pm.response.json().error).to.be.a(\"string\");\r",
 							"});\r",
 							"\r",
-							"pm.test(\"Error message is present\", function () {\r",
-							"    pm.expect(pm.response.json().error).to.include(\"invalid\");\r",
+							"pm.test(\"Error message present\", function () {\r",
+							"    pm.expect(pm.response.json().error).to.include(\"required\");\r",
 							"});\r",
 							"\r",
 							""
@@ -188,7 +560,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n\t\"username\": \"Max\",\r\n    \"password\": \"123\"\r\n}",
+					"raw": "{\r\n\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -196,14 +568,276 @@
 					}
 				},
 				"url": {
-					"raw": "{{baseURL}}/api/auth/login",
+					"raw": "{{baseURL}}/api/auth/register",
 					"host": [
 						"{{baseURL}}"
 					],
 					"path": [
 						"api",
 						"auth",
-						"login"
+						"register"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "register invalid empty username",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 400\", function () {\r",
+							"    pm.response.to.have.status(400);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Response is JSON\", function () {\r",
+							"    pm.response.to.have.header(\"Content-Type\");\r",
+							"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\");\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Response has required fields\", function () {\r",
+							"    pm.expect(pm.response.json()).to.have.property(\"error\");\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Response fields have correct types\", function () {\r",
+							"    pm.expect(pm.response.json().error).to.be.a(\"string\");\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Error message present\", function () {\r",
+							"    pm.expect(pm.response.json().error).to.include(\"required\");\r",
+							"});\r",
+							"\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {},
+						"requests": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"password\" : \"818181\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseURL}}/api/auth/register",
+					"host": [
+						"{{baseURL}}"
+					],
+					"path": [
+						"api",
+						"auth",
+						"register"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "register invalid empty password",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 400\", function () {\r",
+							"    pm.response.to.have.status(400);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Response is JSON\", function () {\r",
+							"    pm.response.to.have.header(\"Content-Type\");\r",
+							"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\");\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Response has required fields\", function () {\r",
+							"    pm.expect(pm.response.json()).to.have.property(\"error\");\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Response fields have correct types\", function () {\r",
+							"    pm.expect(pm.response.json().error).to.be.a(\"string\");\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Error message present\", function () {\r",
+							"    pm.expect(pm.response.json().error).to.include(\"required\");\r",
+							"});\r",
+							"\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {},
+						"requests": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"username\" : \"Oscar\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseURL}}/api/auth/register",
+					"host": [
+						"{{baseURL}}"
+					],
+					"path": [
+						"api",
+						"auth",
+						"register"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "register invalid pwd",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 400\", function () {\r",
+							"    pm.response.to.have.status(400);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Response is JSON\", function () {\r",
+							"    pm.response.to.have.header(\"Content-Type\");\r",
+							"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\");\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Response has required fields\", function () {\r",
+							"    pm.expect(pm.response.json()).to.have.property(\"error\");\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Response fields have correct types\", function () {\r",
+							"    pm.expect(pm.response.json().error).to.be.a(\"string\");\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Error message includes password\", function () {\r",
+							"    pm.expect(pm.response.json().error).to.include(\"Password\");\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Error message includes 6\", function () {\r",
+							"    pm.expect(pm.response.json().error).to.include(\"6\");\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Error message includes characters\", function () {\r",
+							"    pm.expect(pm.response.json().error).to.include(\"characters\");\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {},
+						"requests": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n\t\"username\": \"Osc\",\r\n    \"password\": \"8181\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseURL}}/api/auth/register",
+					"host": [
+						"{{baseURL}}"
+					],
+					"path": [
+						"api",
+						"auth",
+						"register"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "register invalid username",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 400\", function () {\r",
+							"    pm.response.to.have.status(400);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Response is JSON\", function () {\r",
+							"    pm.response.to.have.header(\"Content-Type\");\r",
+							"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\");\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Response has required fields\", function () {\r",
+							"    pm.expect(pm.response.json()).to.have.property(\"error\");\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Response fields have correct types\", function () {\r",
+							"    pm.expect(pm.response.json().error).to.be.a(\"string\");\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Error message includes username\", function () {\r",
+							"    pm.expect(pm.response.json().error).to.include(\"Username\");\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Error message includes 3\", function () {\r",
+							"    pm.expect(pm.response.json().error).to.include(\"3 and 50\");\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Error message includes characters\", function () {\r",
+							"    pm.expect(pm.response.json().error).to.include(\"characters\");\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {},
+						"requests": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n\t\"username\": \"OP\",\r\n    \"password\": \"81\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseURL}}/api/auth/register",
+					"host": [
+						"{{baseURL}}"
+					],
+					"path": [
+						"api",
+						"auth",
+						"register"
 					]
 				}
 			},
@@ -271,68 +905,6 @@
 						"api",
 						"auth",
 						"register"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "login invalid username",
-			"event": [
-				{
-					"listen": "test",
-					"script": {
-						"exec": [
-							"pm.test(\"Status code is 400\", function () {\r",
-							"    pm.response.to.have.status(400);\r",
-							"});\r",
-							"\r",
-							"pm.test(\"Response is JSON\", function () {\r",
-							"    pm.response.to.have.header(\"Content-Type\");\r",
-							"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\");\r",
-							"});\r",
-							"\r",
-							"pm.test(\"Response has required fields\", function () {\r",
-							"    pm.expect(pm.response.json()).to.have.property(\"error\");\r",
-							"});\r",
-							"\r",
-							"pm.test(\"Response fields have correct types\", function () {\r",
-							"    pm.expect(pm.response.json().error).to.be.a(\"string\");\r",
-							"});\r",
-							"\r",
-							"pm.test(\"Error message is present\", function () {\r",
-							"    pm.expect(pm.response.json().error).to.include(\"invalid\");\r",
-							"});\r",
-							"\r",
-							""
-						],
-						"type": "text/javascript",
-						"packages": {},
-						"requests": {}
-					}
-				}
-			],
-			"request": {
-				"method": "POST",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "{\r\n\t\"username\": \"max\",\r\n    \"password\": \"1234\"\r\n}",
-					"options": {
-						"raw": {
-							"language": "json"
-						}
-					}
-				},
-				"url": {
-					"raw": "{{baseURL}}/api/auth/login",
-					"host": [
-						"{{baseURL}}"
-					],
-					"path": [
-						"api",
-						"auth",
-						"login"
 					]
 				}
 			},

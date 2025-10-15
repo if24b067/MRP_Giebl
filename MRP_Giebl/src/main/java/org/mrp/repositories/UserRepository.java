@@ -9,6 +9,22 @@ public class UserRepository implements Repository{
     public UserRepository() {
     }
 
+    //save information in db
+    @Override
+    public void save(User user) {
+        //save to db
+    }
+
+    @Override
+    public void update() {
+        //update in db
+    }
+
+    @Override
+    public void delete() {
+        //delete in db
+    }
+
     //chk whether username already exists
     public boolean chkUsername(String username) {
         return Objects.equals(username, "Max");
@@ -20,19 +36,4 @@ public class UserRepository implements Repository{
         //chk with db
     }
 
-    //save information in db
-    @Override
-    public void save(User user) {
-        //save to db
-    }
-
-    @Override
-    public void update() {
-        //save to db
-    }
-
-    @Override
-    public void delete() {
-        //save to db
-    }
 }
