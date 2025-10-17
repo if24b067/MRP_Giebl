@@ -3,6 +3,7 @@ package org.mrp;
 import com.sun.net.httpserver.HttpServer;
 import org.mrp.handlers.AuthHandler;
 import org.mrp.handlers.MediaHandler;
+import org.mrp.handlers.RatingHandler;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
@@ -16,6 +17,7 @@ public class Main {
         // Handler für verschiedene Pfade registrieren
         server.createContext("/api/auth", new AuthHandler());
         server.createContext("/api/media", new MediaHandler());
+        server.createContext("/api/rating", new RatingHandler());
 
         // Executor setzen (null = Standard-Executor)
         server.setExecutor(null);

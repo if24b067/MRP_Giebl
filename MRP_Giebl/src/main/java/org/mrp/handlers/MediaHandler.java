@@ -24,6 +24,12 @@ public class MediaHandler implements HttpHandler {
         try {
             if (path.endsWith("/create") && "POST".equals(method)) {
                 mediaService.create(exchange);
+            } else if (path.endsWith("/update") && "PUT".equals(method)) {
+                    mediaService.update(exchange);
+            } else if (path.endsWith("/read") && "GET".equals(method)) {
+                mediaService.read(exchange);
+            } else if (path.endsWith("/delete") && "DELETE".equals(method)) {
+                mediaService.delete(exchange);
             } else {
                 JsonHelper.sendError(exchange, 404, "Endpoint not found");
             }

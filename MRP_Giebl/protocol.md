@@ -25,7 +25,7 @@ Getestet wurden mehrere möglichen Kombinationen des Request-body auf die zur Ze
 
 ## Aufwandschätzung
 ### anfängliche Planung und setup
-- erste Überlegungen der Herangehensweise ca. 3h
+- erste Überlegungen der Herangehensweise ca. 4h
 - Erstellung eines ersten UML-Entwurfs ca. 2h
 - nähere Recherche und Anpassung der bissherigen Entwürfe ca. 3h
 ### Models erstellen

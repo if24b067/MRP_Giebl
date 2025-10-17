@@ -3,16 +3,16 @@ package org.mrp.handlers;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import org.mrp.services.AuthService;
+import org.mrp.services.RatingService;
 import org.mrp.utils.JsonHelper;
 
 import java.io.IOException;
 
+public class RatingHandler implements HttpHandler {
+    private RatingService ratingService;
 
-public class AuthHandler implements HttpHandler {
-    private AuthService authService;
-
-    public AuthHandler() {
-        this.authService = new AuthService();
+    public RatingHandler() {
+        this.ratingService = new RatingService();
     }
 
     @Override
@@ -21,16 +21,14 @@ public class AuthHandler implements HttpHandler {
         String path = exchange.getRequestURI().getPath();
 
         try {
-            if (path.endsWith("/register") && "POST".equals(method)) {
-                authService.register(exchange);
-            } else if (path.endsWith("/login") && "POST".equals(method)) {
-                authService.login(exchange);
+            if (path.endsWith("/create") && "POST".equals(method)) {
+                ratingService.create(exchange);
             } else if (path.endsWith("/read") && "GET".equals(method)) {
-                authService.read(exchange);
+                ratingService.read(exchange);
             } else if (path.endsWith("/update") && "PUT".equals(method)) {
-                authService.update(exchange);
+                ratingService.update(exchange);
             } else if (path.endsWith("/delete") && "DELETE".equals(method)) {
-                authService.delete(exchange);
+                ratingService.delete(exchange);
             } else {
                 JsonHelper.sendError(exchange, 404, "Endpoint not found");
             }
@@ -40,6 +38,5 @@ public class AuthHandler implements HttpHandler {
         }
     }
 
+
 }
-
-

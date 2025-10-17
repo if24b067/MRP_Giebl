@@ -92,6 +92,27 @@ public class AuthService {
         response.put("token", token);
         response.put("message", "User logged in successfully");
 
-        JsonHelper.sendResponse(exchange, 201, response);
+        JsonHelper.sendResponse(exchange, 200, response);
+    }
+
+    public void read(HttpExchange exchange) throws IOException, SQLException {
+        Map<String, Object> response = new HashMap<>();
+        response.put("message", "Endpoint not yet further developed");
+
+        JsonHelper.sendResponse(exchange, 418, response);
+    }
+
+    public void update(HttpExchange exchange) throws IOException, SQLException {
+        Map<String, Object> response = new HashMap<>();
+        response.put("message", "Endpoint not yet further developed");
+
+        JsonHelper.sendResponse(exchange, 418, response);
+    }
+
+    public void delete(HttpExchange exchange) throws IOException, SQLException {
+        Map<String, Object> response = new HashMap<>();
+        response.put("message", "Endpoint not yet further developed");
+
+        JsonHelper.sendResponse(exchange, 418, response);
     }
 }
