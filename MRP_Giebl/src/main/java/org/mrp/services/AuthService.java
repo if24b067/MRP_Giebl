@@ -5,23 +5,42 @@ import com.sun.net.httpserver.HttpExchange;
 import org.mrp.models.User;
 import org.mrp.repositories.UserRepository;
 import org.mrp.utils.JsonHelper;
+import org.mrp.utils.UUIDv7Generator;
 
 import java.io.IOException;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-public class AuthService {
 
-    public AuthService() {}
+public class AuthService {
+    UserRepository userRepository = new UserRepository();
+
+    public AuthService() {
+        userRepository = new UserRepository();
+    }
+
+    //function to validate token and return UUID user
+    //TODO UUIDGenerator change ids to UUID
+    public UUID validateToken(HttpExchange exchange) {
+        String authHeader = exchange.getRequestHeaders().getFirst("Authorization");
+
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            return null;
+        }
+
+        String token = authHeader.substring(7); // Remove "Bearer "
+
+        return userRepository.chkToken(token);
+    }
 
     public void register (HttpExchange exchange) throws IOException, SQLException {
         Map<String, String> request = JsonHelper.parseRequest(exchange, HashMap.class);
         String username = request.get("username");
         String password = request.get("password");
-        UserRepository userRepository = new UserRepository();
 
         //validate input
         if(userRepository.chkUsername(username)) {
@@ -47,10 +66,11 @@ public class AuthService {
 
         //hash password
         String pwHash = BCrypt.withDefaults().hashToString(12, password.toCharArray());
-        //create Timestamp
+        //createMedia Timestamp
         Timestamp createdAt = new Timestamp(System.currentTimeMillis());
         //tmp hilfswert UUID
-        String userId = "0189e8c6-6b1b-7def-b95b-6f2b8cdffd5a";
+        UUIDv7Generator uuidv7Generator = new UUIDv7Generator();
+        UUID userId = uuidv7Generator.randomUUID();
 
         User user = new User(userId, username, pwHash, createdAt);
         userRepository.save(user);
@@ -69,7 +89,6 @@ public class AuthService {
         Map<String, String> request = JsonHelper.parseRequest(exchange, HashMap.class);
         String username = request.get("username");
         String password = request.get("password");
-        UserRepository userRepository = new UserRepository();
 
 
         //validate input

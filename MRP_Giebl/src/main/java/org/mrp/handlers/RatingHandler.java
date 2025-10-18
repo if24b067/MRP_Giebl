@@ -21,13 +21,13 @@ public class RatingHandler implements HttpHandler {
         String path = exchange.getRequestURI().getPath();
 
         try {
-            if (path.endsWith("/create") && "POST".equals(method)) {
+            if ("POST".equals(method)) {
                 ratingService.create(exchange);
-            } else if (path.endsWith("/read") && "GET".equals(method)) {
+            } else if ("GET".equals(method)) {
                 ratingService.read(exchange);
-            } else if (path.endsWith("/update") && "PUT".equals(method)) {
+            } else if ("PUT".equals(method)) {
                 ratingService.update(exchange);
-            } else if (path.endsWith("/delete") && "DELETE".equals(method)) {
+            } else if ("DELETE".equals(method)) {
                 ratingService.delete(exchange);
             } else {
                 JsonHelper.sendError(exchange, 404, "Endpoint not found");

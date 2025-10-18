@@ -25,11 +25,11 @@ public class AuthHandler implements HttpHandler {
                 authService.register(exchange);
             } else if (path.endsWith("/login") && "POST".equals(method)) {
                 authService.login(exchange);
-            } else if (path.endsWith("/read") && "GET".equals(method)) {
+            } else if ("GET".equals(method)) {
                 authService.read(exchange);
-            } else if (path.endsWith("/update") && "PUT".equals(method)) {
+            } else if ("PUT".equals(method)) {
                 authService.update(exchange);
-            } else if (path.endsWith("/delete") && "DELETE".equals(method)) {
+            } else if ("DELETE".equals(method)) {
                 authService.delete(exchange);
             } else {
                 JsonHelper.sendError(exchange, 404, "Endpoint not found");

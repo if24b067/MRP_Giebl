@@ -1,11 +1,12 @@
 package org.mrp.models;
 
 import java.sql.Timestamp;
+import java.util.UUID;
 
 public class Rating {
-    private String id;
-    private User creator;
-    private MediaEntry mediaEntry;
+    private UUID id;
+    private UUID creator;
+    private UUID mediaEntry;
     private int starValue;
     private String comment;
     private Timestamp createdAt;
@@ -13,7 +14,7 @@ public class Rating {
 
     public Rating() {}
 
-    public Rating(User creator, MediaEntry mediaEntry, int starValue, String comment, Timestamp createdAt) {
+    public Rating(UUID creator, UUID mediaEntry, int starValue, String comment, Timestamp createdAt) {
         this.creator = creator;
         this.mediaEntry = mediaEntry;
         this.starValue = starValue;
@@ -21,9 +22,15 @@ public class Rating {
         this.createdAt = createdAt;
     }
 
-    public User getCreator() { return creator; }
+    public UUID getCreator() {
+        //possibly call function to get user from db to pass object
+        return creator;
+    }
 
-    public MediaEntry getMediaEntry() { return mediaEntry; }
+    public UUID getMediaEntry() {
+        //possibly call function to get mediaEntry from db to pass object
+        return mediaEntry;
+    }
 
     public int getStarValue() { return starValue; }
     public void setStarValue(int starValue) { this.starValue = starValue; }

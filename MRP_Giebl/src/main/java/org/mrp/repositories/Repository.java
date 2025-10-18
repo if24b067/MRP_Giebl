@@ -1,9 +1,13 @@
 package org.mrp.repositories;
 
-import org.mrp.models.User;
+import java.util.List;
+import java.util.UUID;
 
 public interface Repository {
-    public void save(User user);
-    public void update();
-    public void delete();
+
+    //TODO DTO
+    public <T> void save(T t);
+    public <T> void update(T t);
+    public void delete(UUID id);
+    public <T> List<T> get();
 }

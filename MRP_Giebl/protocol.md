@@ -34,12 +34,13 @@ Getestet wurden mehrere möglichen Kombinationen des Request-body auf die zur Ze
 ### Server und Services
 - Erstaufsetzen des Servers ca. 3h
 - grobe Planung von Services und Handlern 1h
-- kontinuierliche Anpassung des Servers ca. 1h
-- genauere Ausführung der Services ca. 2h
+- kontinuierliche Anpassung des Servers ca. 4h
+- genauere Ausführung der Services ca. 5h
 - Erstellung von Repositories ca. 1h
+- Anpassung der Repositories ca. 2h
 ### Tests
 - anfängliches vertrautmachen mit Postman ca. 1h
-- Erstellung endgültiger Postman Requests ca. 2h
-- schreiben endgültiger Postman-Tests ca. 2h
+- Erstellung Postman Requests ca. 3h
+- schreiben Postman-Tests ca. 5h
 
 
