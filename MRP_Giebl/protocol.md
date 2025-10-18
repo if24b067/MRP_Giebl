@@ -42,5 +42,9 @@ Getestet wurden mehrere möglichen Kombinationen des Request-body auf die zur Ze
 - anfängliches vertrautmachen mit Postman ca. 1h
 - Erstellung Postman Requests ca. 3h
 - schreiben Postman-Tests ca. 5h
+### Datenbank
+- Docker installieren und Datenbank aufsetzen ca. 3h
+- Repositories bearbeiten um Datenbank zu nutzen ca. 7h 
+
 
 

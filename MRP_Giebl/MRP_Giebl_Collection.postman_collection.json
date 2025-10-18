@@ -51,7 +51,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n\t\"username\": \"Max\",\n    \"password\": \"1234\"\n}",
+					"raw": "{\n\t\"username\": \"Oscar\",\n    \"password\": \"818181\"\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -520,6 +520,68 @@
 			"response": []
 		},
 		{
+			"name": "register invalid empty Copy",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 400\", function () {\r",
+							"    pm.response.to.have.status(400);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Response is JSON\", function () {\r",
+							"    pm.response.to.have.header(\"Content-Type\");\r",
+							"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\");\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Response has required fields\", function () {\r",
+							"    pm.expect(pm.response.json()).to.have.property(\"error\");\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Response fields have correct types\", function () {\r",
+							"    pm.expect(pm.response.json().error).to.be.a(\"string\");\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Error message present\", function () {\r",
+							"    pm.expect(pm.response.json().error).to.include(\"required\");\r",
+							"});\r",
+							"\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {},
+						"requests": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseURL}}/api/auth/register",
+					"host": [
+						"{{baseURL}}"
+					],
+					"path": [
+						"api",
+						"auth",
+						"register"
+					]
+				}
+			},
+			"response": []
+		},
+		{
 			"name": "register invalid empty",
 			"event": [
 				{
@@ -582,7 +644,7 @@
 			"response": []
 		},
 		{
-			"name": "register invalid empty username",
+			"name": "register invalid username",
 			"event": [
 				{
 					"listen": "test",
@@ -606,7 +668,7 @@
 							"});\r",
 							"\r",
 							"pm.test(\"Error message present\", function () {\r",
-							"    pm.expect(pm.response.json().error).to.include(\"required\");\r",
+							"    pm.expect(pm.response.json().error).to.include(\"exists\");\r",
 							"});\r",
 							"\r",
 							""
@@ -622,7 +684,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"password\" : \"818181\"\r\n}",
+					"raw": "{\r\n    \"username\": \"Oscar\",\r\n    \"password\" : \"818181\"\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -844,73 +906,6 @@
 			"response": []
 		},
 		{
-			"name": "register username exists",
-			"event": [
-				{
-					"listen": "test",
-					"script": {
-						"exec": [
-							"pm.test(\"Status code is 400\", function () {\r",
-							"    pm.response.to.have.status(400);\r",
-							"});\r",
-							"\r",
-							"pm.test(\"Response is JSON\", function () {\r",
-							"    pm.response.to.have.header(\"Content-Type\");\r",
-							"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\");\r",
-							"});\r",
-							"\r",
-							"pm.test(\"Response has required fields\", function () {\r",
-							"    pm.expect(pm.response.json()).to.have.property(\"error\");\r",
-							"});\r",
-							"\r",
-							"pm.test(\"Response fields have correct types\", function () {\r",
-							"    pm.expect(pm.response.json().error).to.be.a(\"string\");\r",
-							"});\r",
-							"\r",
-							"pm.test(\"Error message includes username\", function () {\r",
-							"    pm.expect(pm.response.json().error).to.include(\"Username\");\r",
-							"});\r",
-							"\r",
-							"pm.test(\"Error message includes exists\", function () {\r",
-							"    pm.expect(pm.response.json().error).to.include(\"exists\");\r",
-							"});\r",
-							"\r",
-							"\r",
-							""
-						],
-						"type": "text/javascript",
-						"packages": {},
-						"requests": {}
-					}
-				}
-			],
-			"request": {
-				"method": "POST",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "{\r\n\t\"username\": \"Max\",\r\n    \"password\": \"81\"\r\n}",
-					"options": {
-						"raw": {
-							"language": "json"
-						}
-					}
-				},
-				"url": {
-					"raw": "{{baseURL}}/api/auth/register",
-					"host": [
-						"{{baseURL}}"
-					],
-					"path": [
-						"api",
-						"auth",
-						"register"
-					]
-				}
-			},
-			"response": []
-		},
-		{
 			"name": "Media Entry create success",
 			"event": [
 				{
@@ -952,7 +947,7 @@
 					"bearer": [
 						{
 							"key": "token",
-							"value": "Max_94faa0df-8317-4b18-ad77-4fb2fc607a58",
+							"value": "Oscar_55b50184-1ed8-4655-9b3b-537b7e9d2789",
 							"type": "string"
 						}
 					]
@@ -961,7 +956,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"title\": \"frew\",\r\n    \"desc\": \"gtreg\",\r\n    \"releaseYear\": \"123\",\r\n    \"ageRestriction\": \"12\",\r\n    \"genres\": \"horror, comdey\"\r\n}"
+					"raw": "{\r\n    \"title\": \"another one\",\r\n    \"desc\": \"this is a movie\",\r\n    \"releaseYear\": \"2020\",\r\n    \"ageRestriction\": \"0\",\r\n    \"genres\": \"comdey, bleep\"\r\n}"
 				},
 				"url": {
 					"raw": "{{baseURL}}/api/media",
@@ -1018,7 +1013,7 @@
 					"bearer": [
 						{
 							"key": "token",
-							"value": "Max_94faa0df-8317-4b18-ad77-4fb2fc607a58",
+							"value": "Oscar_55b50184-1ed8-4655-9b3b-537b7e9d2789",
 							"type": "string"
 						}
 					]
@@ -1084,7 +1079,7 @@
 					"bearer": [
 						{
 							"key": "token",
-							"value": "Max_94faa0df-8317-4b18-ad77-4fb2fc607a58",
+							"value": "Oscar_55b50184-1ed8-4655-9b3b-537b7e9d2789",
 							"type": "string"
 						}
 					]
@@ -1216,7 +1211,7 @@
 					"bearer": [
 						{
 							"key": "token",
-							"value": "Max_94faa0df-8317-4b18-ad77-4fb2fc607a58",
+							"value": "Oscar_55b50184-1ed8-4655-9b3b-537b7e9d2789",
 							"type": "string"
 						}
 					]
@@ -1225,7 +1220,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"media_id\" : \"0199f65b-26cb-7a8c-bcff-4777547d41c4\",\r\n    \"title\": \"frew\",\r\n    \"desc\": \"gtreg\",\r\n    \"releaseYear\": \"123\",\r\n    \"ageRestriction\": \"12\",\r\n    \"genres\": \"horror, comdey\"\r\n}"
+					"raw": "{\r\n    \"media_id\" : \"0199f7a6-1c53-7e44-b52a-d639629a07ce\",\r\n    \"title\": \"fast\",\r\n    \"desc\": \"very fast\",\r\n    \"releaseYear\": \"1800\",\r\n    \"ageRestriction\": \"12\",\r\n    \"genres\": \"horror, comedy, weee\"\r\n}"
 				},
 				"url": {
 					"raw": "{{baseURL}}/api/media",
@@ -1282,7 +1277,7 @@
 					"bearer": [
 						{
 							"key": "token",
-							"value": "Max_94faa0df-8317-4b18-ad77-4fb2fc607a58",
+							"value": "Oscar_55b50184-1ed8-4655-9b3b-537b7e9d2789",
 							"type": "string"
 						}
 					]
@@ -1348,7 +1343,7 @@
 					"bearer": [
 						{
 							"key": "token",
-							"value": "Max_94faa0df-8317-4b18-ad77-4fb2fc607a58",
+							"value": "Oscar_55b50184-1ed8-4655-9b3b-537b7e9d2789",
 							"type": "string"
 						}
 					]
@@ -1357,7 +1352,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"media_id\" : \"0199f65b-26cb-7a8c-bcff-4777547d41c4\",\r\n    \"title\": \"frew\"\r\n}"
+					"raw": "{\r\n    \"media_id\" : \"0199f7a6-1c53-7e44-b52a-d639629a07ce\",\r\n    \"title\": \"frew\"\r\n}"
 				},
 				"url": {
 					"raw": "{{baseURL}}/api/media",
@@ -1439,6 +1434,72 @@
 			"response": []
 		},
 		{
+			"name": "Media Entry update unauthorised edit",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 401\", function () {\r",
+							"    pm.response.to.have.status(401);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Response is JSON\", function () {\r",
+							"    pm.response.to.have.header(\"Content-Type\");\r",
+							"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\");\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Response has required fields\", function () {\r",
+							"    pm.expect(pm.response.json()).to.have.property(\"error\");\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Response fields have correct types\", function () {\r",
+							"    pm.expect(pm.response.json().error).to.be.a(\"string\");\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Error message is present\", function () {\r",
+							"    pm.expect(pm.response.json().error).to.include(\"invalid\");\r",
+							"});\r",
+							"\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {},
+						"requests": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "Max_beba387a-2c2b-489f-ac62-d64e715c6b3a",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"media_id\" : \"0199f65b-26cb-7a8c-bcff-4777547d41c4\",\r\n    \"title\": \"frew\",\r\n    \"desc\": \"gtreg\",\r\n    \"releaseYear\": \"123\",\r\n    \"ageRestriction\": \"12\",\r\n    \"genres\": \"horror, comdey\"\r\n}"
+				},
+				"url": {
+					"raw": "{{baseURL}}/api/media",
+					"host": [
+						"{{baseURL}}"
+					],
+					"path": [
+						"api",
+						"media"
+					]
+				}
+			},
+			"response": []
+		},
+		{
 			"name": "Media Entry delete success",
 			"event": [
 				{
@@ -1480,7 +1541,7 @@
 					"bearer": [
 						{
 							"key": "token",
-							"value": "Max_94faa0df-8317-4b18-ad77-4fb2fc607a58",
+							"value": "Oscar_55b50184-1ed8-4655-9b3b-537b7e9d2789",
 							"type": "string"
 						}
 					]
@@ -1489,7 +1550,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"media_id\" : \"0199f65b-26cb-7a8c-bcff-4777547d41c4\"\r\n}"
+					"raw": "{\r\n    \"media_id\" : \"0199f7a6-1c53-7e44-b52a-d639629a07ce\"\r\n}"
 				},
 				"url": {
 					"raw": "{{baseURL}}/api/media",
@@ -1546,7 +1607,7 @@
 					"bearer": [
 						{
 							"key": "token",
-							"value": "Max_94faa0df-8317-4b18-ad77-4fb2fc607a58",
+							"value": "Oscar_55b50184-1ed8-4655-9b3b-537b7e9d2789",
 							"type": "string"
 						}
 					]
@@ -1612,7 +1673,7 @@
 					"bearer": [
 						{
 							"key": "token",
-							"value": "Max_94faa0df-8317-4b18-ad77-4fb2fc607a58",
+							"value": "Oscar_55b50184-1ed8-4655-9b3b-537b7e9d2789",
 							"type": "string"
 						}
 					]
@@ -1703,6 +1764,72 @@
 			"response": []
 		},
 		{
+			"name": "Media Entry delete unauthorised",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 401\", function () {\r",
+							"    pm.response.to.have.status(401);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Response is JSON\", function () {\r",
+							"    pm.response.to.have.header(\"Content-Type\");\r",
+							"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\");\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Response has required fields\", function () {\r",
+							"    pm.expect(pm.response.json()).to.have.property(\"error\");\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Response fields have correct types\", function () {\r",
+							"    pm.expect(pm.response.json().error).to.be.a(\"string\");\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Error message is present\", function () {\r",
+							"    pm.expect(pm.response.json().error).to.include(\"unauthorized\");\r",
+							"});\r",
+							"\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {},
+						"requests": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "Max_beba387a-2c2b-489f-ac62-d64e715c6b3a",
+							"type": "string"
+						}
+					]
+				},
+				"method": "DELETE",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"media_id\" : \"0199f7e0-7a56-7713-9609-3160ff3b5172\"\r\n}"
+				},
+				"url": {
+					"raw": "{{baseURL}}/api/media",
+					"host": [
+						"{{baseURL}}"
+					],
+					"path": [
+						"api",
+						"media"
+					]
+				}
+			},
+			"response": []
+		},
+		{
 			"name": "Media Entry read success",
 			"event": [
 				{
@@ -1735,7 +1862,76 @@
 					"bearer": [
 						{
 							"key": "token",
-							"value": "Max_94faa0df-8317-4b18-ad77-4fb2fc607a58",
+							"value": "Max_beba387a-2c2b-489f-ac62-d64e715c6b3a",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "{{baseURL}}/api/media",
+					"host": [
+						"{{baseURL}}"
+					],
+					"path": [
+						"api",
+						"media"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Media Entry read invalid token",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 401\", function () {\r",
+							"    pm.response.to.have.status(401);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Response is JSON\", function () {\r",
+							"    pm.response.to.have.header(\"Content-Type\");\r",
+							"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\");\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Response has required fields\", function () {\r",
+							"    pm.expect(pm.response.json()).to.have.property(\"error\");\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Response fields have correct types\", function () {\r",
+							"    pm.expect(pm.response.json().error).to.be.a(\"string\");\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Success message is present\", function () {\r",
+							"    pm.expect(pm.response.json().error).to.include(\"invalid\");\r",
+							"});\r",
+							"\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {},
+						"requests": {}
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "token",
 							"type": "string"
 						}
 					]
@@ -2021,75 +2217,6 @@
 					"path": [
 						"api",
 						"rating"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "Media Entry read invalid token",
-			"event": [
-				{
-					"listen": "test",
-					"script": {
-						"exec": [
-							"pm.test(\"Status code is 401\", function () {\r",
-							"    pm.response.to.have.status(401);\r",
-							"});\r",
-							"\r",
-							"pm.test(\"Response is JSON\", function () {\r",
-							"    pm.response.to.have.header(\"Content-Type\");\r",
-							"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\");\r",
-							"});\r",
-							"\r",
-							"pm.test(\"Response has required fields\", function () {\r",
-							"    pm.expect(pm.response.json()).to.have.property(\"error\");\r",
-							"});\r",
-							"\r",
-							"pm.test(\"Response fields have correct types\", function () {\r",
-							"    pm.expect(pm.response.json().error).to.be.a(\"string\");\r",
-							"});\r",
-							"\r",
-							"pm.test(\"Success message is present\", function () {\r",
-							"    pm.expect(pm.response.json().error).to.include(\"invalid\");\r",
-							"});\r",
-							"\r",
-							""
-						],
-						"type": "text/javascript",
-						"packages": {},
-						"requests": {}
-					}
-				}
-			],
-			"protocolProfileBehavior": {
-				"disableBodyPruning": true
-			},
-			"request": {
-				"auth": {
-					"type": "bearer",
-					"bearer": [
-						{
-							"key": "token",
-							"value": "token",
-							"type": "string"
-						}
-					]
-				},
-				"method": "GET",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": ""
-				},
-				"url": {
-					"raw": "{{baseURL}}/api/media",
-					"host": [
-						"{{baseURL}}"
-					],
-					"path": [
-						"api",
-						"media"
 					]
 				}
 			},

@@ -17,15 +17,14 @@ import java.util.UUID;
 
 
 public class AuthService {
-    UserRepository userRepository = new UserRepository();
+    private UserRepository userRepository;
 
     public AuthService() {
         userRepository = new UserRepository();
     }
 
     //function to validate token and return UUID user
-    //TODO UUIDGenerator change ids to UUID
-    public UUID validateToken(HttpExchange exchange) {
+    public UUID validateToken(HttpExchange exchange) throws SQLException {
         String authHeader = exchange.getRequestHeaders().getFirst("Authorization");
 
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
@@ -105,6 +104,7 @@ public class AuthService {
 
 
         String token = username + "_" + UUID.randomUUID().toString();
+        userRepository.saveToken(token, username);
 
         //response
         Map<String, Object> response = new HashMap<>();

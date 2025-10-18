@@ -1,55 +1,76 @@
 package org.mrp.repositories;
 
 import org.mrp.models.MediaEntry;
+import org.mrp.utils.Database;
 import org.mrp.utils.UUIDv7Generator;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.time.LocalDate;
+import java.util.*;
 
 public class MediaRepository implements Repository{
+    private UUIDv7Generator uuidGenerator;
+    private Database db;
 
     public MediaRepository() {
+        uuidGenerator = new UUIDv7Generator();
+        db = new Database();
     }
 
     //save information in db
     @Override
-    public <T> void save(T t) {
+    public <T> void save(T t) throws SQLException {
         if(t instanceof MediaEntry) {
             MediaEntry mediaEntry = (MediaEntry) t;
-            //save to db
+            UUID user_id = db.insert("INSERT INTO MediaEntries (media_id, title, description, creator, release_year, age_restriction) VALUES (?, ?, ?, ?, ?, ?)",
+                    mediaEntry.getTitle(),
+                    mediaEntry.getDesc(),
+                    mediaEntry.getCreator(),
+                    mediaEntry.getReleaseYear(),
+                    mediaEntry.getAgeRestriction()
+            );
         }
     }
 
     @Override
-    public <T> void update(T t) {
+    public <T> void update(T t) throws SQLException {
         if(t instanceof MediaEntry) {
             MediaEntry mediaEntry = (MediaEntry) t;
-            //update in db
+            db.update("UPDATE MediaEntries SET title = ?, description = ?, release_year = ?, age_restriction = ? WHERE media_id = ?",
+                    mediaEntry.getTitle(),
+                    mediaEntry.getDesc(),
+                    mediaEntry.getReleaseYear(),
+                    mediaEntry.getAgeRestriction(),
+                    mediaEntry.getId()
+            );
         }
     }
 
     @Override
-    public void delete(UUID id) {
+    public void delete(UUID id) throws SQLException {
+        db.update("DELETE FROM MediaEntries WHERE media_id = ?", id);
         //delete in db
     }
 
     @Override
-    public <T> List<T> get() {
-        //get from db  String title, String desc, UUID creator, int releaseYear, int ageRestriction, List<String> genres) {
-        UUIDv7Generator uuidv7Generator = new UUIDv7Generator();
-        List<String> genres = new ArrayList<>();
-        genres.add("comedy");
-        genres.add("crocodile");
-        genres.add("alligator");
+    public List<Map<String, Object>> get() throws SQLException {
+        List<Map<String, Object>> response = new ArrayList<>();
+        ResultSet rs = db.query("SELECT * FROM MediaEntries");
 
-        MediaEntry mediaEntry = new MediaEntry("name", "movie", uuidv7Generator.randomUUID(), 2000, 12, genres);
-        MediaEntry mediaEntry1 = new MediaEntry("another", "film", uuidv7Generator.randomUUID(), 2003, 16, genres);
+        while (rs.next()) {
+            Map<String, Object> mediaEntry = new HashMap<>();
+            mediaEntry.put("media_id", rs.getObject("media_id"));
+            mediaEntry.put("title", rs.getString("title"));
+            mediaEntry.put("description", rs.getString("description"));
+            mediaEntry.put("creator", rs.getObject("creator"));
+            mediaEntry.put("release_year", rs.getInt("release_year"));
+            mediaEntry.put("age_restriction", rs.getInt("age_restriction"));
 
-        List<MediaEntry> mediaEntries = new ArrayList<>();
-        mediaEntries.add(mediaEntry);
-        mediaEntries.add(mediaEntry1);
-        return (List<T>) mediaEntries;
+            response.add(mediaEntry);
+        }
+
+        return response;
     }
 
     public int calcAvgScore(UUID media_id) {
@@ -63,8 +84,16 @@ public class MediaRepository implements Repository{
         return sum/cnt;
     }
 
-    public boolean chkCreator(UUID media_id, UUID user_id) {
-        //chk with db
-        return true;
+    public boolean chkCreator(UUID media_id, UUID user_id) throws SQLException {
+        ResultSet rs = db.query("SELECT (creator) FROM MediaEntries WHERE media_id = ?",
+                media_id);
+        if(!rs.next()) {return false;}  //media entry not found
+        String creatorId = rs.getString("creator");
+        String userId = user_id.toString();
+        return Objects.equals(userId, creatorId);
     }
 }
+/*
+ResultSet rs = db.query("SELECT (user_id) FROM Users WHERE token = ?", token);
+        if(!rs.next()) {return null;}  //token not found
+        return UUID.fromString(rs.getString("user_id"));*/

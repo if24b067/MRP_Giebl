@@ -1,6 +1,7 @@
 package org.mrp.models;
 
 import java.sql.Timestamp;
+import java.util.List;
 import java.util.UUID;
 
 public class User {
@@ -9,6 +10,7 @@ public class User {
     private String passwordHash;
     private Timestamp createdAt;
     private String token;
+    private List<MediaEntry> favourites;
 
 
     public User() {}

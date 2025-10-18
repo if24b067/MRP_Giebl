@@ -1,7 +1,8 @@
 package org.mrp.models;
 
 
-import java.sql.Timestamp;
+import org.mrp.utils.UUIDv7Generator;
+
 import java.util.List;
 import java.util.UUID;
 
@@ -13,29 +14,39 @@ public class MediaEntry {
     private int releaseYear;
     private int ageRestriction;
     private List<String> genres;
-    //private List<Rating> ratings;
 
     public MediaEntry() {}
 
-    public MediaEntry(String title, String desc, UUID creator, int releaseYear, int ageRestriction, List<String> genres) {
+    public MediaEntry(UUID id, String title, String desc, UUID creator, int releaseYear, int ageRestriction, List<String> genres) {
+        this.id = id;
         this.title = title;
         this.desc = desc;
         this.creator = creator;
         this.releaseYear = releaseYear;
         this.ageRestriction = ageRestriction;
         this.genres = genres;
-        id =  UUID.randomUUID();
     }
 
-    /*public int calcAvgScore() {
-        int sum = 0;
-        int cnt = 0;
-        for (Rating rating : ratings) {
-            sum += rating.getStarValue();
-            cnt++;
-        }
-        return sum/cnt;
-    }*/
+    public MediaEntry(String title, String desc, UUID creator, int releaseYear, int ageRestriction, List<String> genres) {
+        UUIDv7Generator uuidv7Generator = new UUIDv7Generator();
+        id = uuidv7Generator.randomUUID();
+        this.title = title;
+        this.desc = desc;
+        this.creator = creator;
+        this.releaseYear = releaseYear;
+        this.ageRestriction = ageRestriction;
+        this.genres = genres;
+    }
+
+    public MediaEntry(UUID id, String title, String desc, UUID creator, int releaseYear, int ageRestriction) {
+        this.id = id;
+        this.title = title;
+        this.desc = desc;
+        this.creator = creator;
+        this.releaseYear = releaseYear;
+        this.ageRestriction = ageRestriction;
+        genres = null;
+    }
 
     public UUID getId() { return id; }
     public void setId(UUID id) {}
@@ -56,7 +67,4 @@ public class MediaEntry {
 
     public List<String> getGenres() { return genres; }
     public void setGenres(String genre) { genres.add(genre); }
-
-    /*public List<Rating> getRatings() { return ratings; }
-    public void setRating(Rating rating) { ratings.add(rating); }*/
 }

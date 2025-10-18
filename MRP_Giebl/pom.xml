@@ -27,12 +27,17 @@
             <artifactId>bcrypt</artifactId>
             <version>0.10.2</version>
         </dependency>
-
         <!-- UUID Creator for UUID v7 support -->
         <dependency>
             <groupId>com.github.f4b6a3</groupId>
             <artifactId>uuid-creator</artifactId>
             <version>5.3.3</version>
+        </dependency>
+        <!-- PostgreSQL -->
+        <dependency>
+            <groupId>org.postgresql</groupId>
+            <artifactId>postgresql</artifactId>
+            <version>42.7.7</version>
         </dependency>
     </dependencies>
 

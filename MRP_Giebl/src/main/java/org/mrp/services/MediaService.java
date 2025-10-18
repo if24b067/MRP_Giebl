@@ -1,6 +1,5 @@
 package org.mrp.services;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sun.net.httpserver.HttpExchange;
 import org.mrp.models.MediaEntry;
 import org.mrp.repositories.MediaRepository;
@@ -13,10 +12,8 @@ import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import static java.lang.Integer.parseInt;
-
 public class MediaService {
-    MediaRepository mediaRepository = new MediaRepository();
+    private MediaRepository mediaRepository;
 
     public MediaService() {
         mediaRepository = new MediaRepository();
@@ -78,7 +75,6 @@ public class MediaService {
 
 
         UUID creator = user_id;
-        System.out.println("genres" + genres);
 
         //validate input
         if (title == null || title.trim().isEmpty() ||
@@ -115,9 +111,9 @@ public class MediaService {
             return;
         }
 
-        List<MediaEntry> mediaEntries = mediaRepository.get();
+        List<Map<String, Object>> response = mediaRepository.get();
 
-        Map<UUID, Object> response = mediaEntries.stream().collect(Collectors.toMap(MediaEntry::getId, Function.identity()));
+        //Map<UUID, Object> response = mediaEntries.stream().collect(Collectors.toMap(MediaEntry::getId, Function.identity()));
 
         JsonHelper.sendResponse(exchange, 200, response);
     }
@@ -185,8 +181,7 @@ public class MediaService {
             return;
         }
 
-
-        MediaEntry mediaEntry = new MediaEntry(title, desc, user_id, releaseYear, ageRestriction, genres);
+        MediaEntry mediaEntry = new MediaEntry(media_id, title, desc, user_id, releaseYear, ageRestriction, genres);
 
         //call repo function
         mediaRepository.update(mediaEntry);
