@@ -73,14 +73,7 @@ public class MediaRepository implements Repository{
     }
 
     public int calcAvgScore(UUID media_id) {
-        int sum = 0;
-        int cnt = 0;
-        //get rating score for media_id from db
-        /*for (Rating rating : ratings) {
-            sum += rating.getStarValue();
-            cnt++;
-        }*/
-        return sum/cnt;
+        return 0;
     }
 
     public boolean chkCreator(UUID media_id, UUID user_id) throws SQLException {
@@ -92,7 +85,4 @@ public class MediaRepository implements Repository{
         return Objects.equals(userId, creatorId);
     }
 }
-/*
-ResultSet rs = db.query("SELECT (user_id) FROM Users WHERE token = ?", token);
-        if(!rs.next()) {return null;}  //token not found
-        return UUID.fromString(rs.getString("user_id"));*/
+
