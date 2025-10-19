@@ -9,20 +9,18 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.sql.SQLException;
 import java.util.*;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 
 public class MediaService {
     private MediaRepository mediaRepository;
+    private AuthService authService;
 
     public MediaService() {
         mediaRepository = new MediaRepository();
+        authService = new AuthService();
     }
 
 
     public void createMedia(HttpExchange exchange) throws IOException, SQLException {
-        //TODO put validate token in other class
-        AuthService authService = new AuthService();
         UUID user_id = authService.validateToken(exchange);
 
         if (user_id == null) {
@@ -103,7 +101,6 @@ public class MediaService {
     }
 
     public void read(HttpExchange exchange) throws IOException, SQLException {
-        AuthService authService = new AuthService();
         UUID user_id = authService.validateToken(exchange);
 
         if (user_id == null) {
@@ -119,7 +116,6 @@ public class MediaService {
     }
 
     public void update(HttpExchange exchange) throws IOException, SQLException {
-        AuthService authService = new AuthService();
         UUID user_id = authService.validateToken(exchange);
 
         if (user_id == null) {
@@ -193,7 +189,6 @@ public class MediaService {
     }
 
     public void delete(HttpExchange exchange) throws IOException, SQLException {
-        AuthService authService = new AuthService();
         UUID user_id = authService.validateToken(exchange);
 
         if (user_id == null) {

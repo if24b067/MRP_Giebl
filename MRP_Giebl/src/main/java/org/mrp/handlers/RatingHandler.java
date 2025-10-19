@@ -2,7 +2,6 @@ package org.mrp.handlers;
 
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
-import org.mrp.services.AuthService;
 import org.mrp.services.RatingService;
 import org.mrp.utils.JsonHelper;
 

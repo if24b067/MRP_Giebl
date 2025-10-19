@@ -2,7 +2,6 @@
 DROP TABLE IF EXISTS Ratings;
 DROP TABLE IF EXISTS MediaEntries;
 DROP TABLE IF EXISTS Users;
-DROP TABLE IF EXISTS Favourites;
 
 -- Create Users table
 CREATE TABLE Users (
@@ -34,12 +33,5 @@ CREATE TABLE Ratings (
     created_at TIMESTAMP NOT NULL,
     likes INT DEFAULT 0,
     FOREIGN KEY (creator) REFERENCES Users(user_id),
-    FOREIGN KEY (media_entry) REFERENCES MediaEntries(media_id)
-);
-
--- Create Intermediary table Favourites
-CREATE TABLE Favourites (
-    fav_id UUID PRIMARY KEY,
-    FOREIGN KEY (user) REFERENCES Users(user_id),
     FOREIGN KEY (media_entry) REFERENCES MediaEntries(media_id)
 );

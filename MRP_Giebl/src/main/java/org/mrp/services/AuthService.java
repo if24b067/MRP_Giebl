@@ -8,7 +8,6 @@ import org.mrp.utils.JsonHelper;
 import org.mrp.utils.UUIDv7Generator;
 
 import java.io.IOException;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.HashMap;

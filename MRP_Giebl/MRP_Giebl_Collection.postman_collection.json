@@ -9,6 +9,1056 @@
 	},
 	"item": [
 		{
+			"name": "Media Entry create success",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 201\", function () {\r",
+							"    pm.response.to.have.status(201);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Response is JSON\", function () {\r",
+							"    pm.response.to.have.header(\"Content-Type\");\r",
+							"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\");\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Response has required fields\", function () {\r",
+							"    pm.expect(pm.response.json()).to.have.property(\"message\");\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Response fields have correct types\", function () {\r",
+							"    pm.expect(pm.response.json().message).to.be.a(\"string\");\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Success message is present\", function () {\r",
+							"    pm.expect(pm.response.json().message).to.include(\"created\");\r",
+							"});\r",
+							"\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {},
+						"requests": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "Oscar_55b50184-1ed8-4655-9b3b-537b7e9d2789",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"title\": \"this is a movie\",\r\n    \"desc\": \"the best movie ever\",\r\n    \"releaseYear\": \"2020\",\r\n    \"ageRestriction\": \"0\",\r\n    \"genres\": \"comdey, bleep\"\r\n}"
+				},
+				"url": {
+					"raw": "{{baseURL}}/api/media",
+					"host": [
+						"{{baseURL}}"
+					],
+					"path": [
+						"api",
+						"media"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Media Entry create empty body",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 400\", function () {\r",
+							"    pm.response.to.have.status(400);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Response is JSON\", function () {\r",
+							"    pm.response.to.have.header(\"Content-Type\");\r",
+							"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\");\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Response has required fields\", function () {\r",
+							"    pm.expect(pm.response.json()).to.have.property(\"error\");\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Response fields have correct types\", function () {\r",
+							"    pm.expect(pm.response.json().error).to.be.a(\"string\");\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Error message is present\", function () {\r",
+							"    pm.expect(pm.response.json().error).to.include(\"empty\");\r",
+							"});\r",
+							"\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {},
+						"requests": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "Oscar_55b50184-1ed8-4655-9b3b-537b7e9d2789",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "{{baseURL}}/api/media",
+					"host": [
+						"{{baseURL}}"
+					],
+					"path": [
+						"api",
+						"media"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Media Entry create incorrect input",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 400\", function () {\r",
+							"    pm.response.to.have.status(400);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Response is JSON\", function () {\r",
+							"    pm.response.to.have.header(\"Content-Type\");\r",
+							"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\");\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Response has required fields\", function () {\r",
+							"    pm.expect(pm.response.json()).to.have.property(\"error\");\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Response fields have correct types\", function () {\r",
+							"    pm.expect(pm.response.json().error).to.be.a(\"string\");\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Error message is present\", function () {\r",
+							"    pm.expect(pm.response.json().error).to.include(\"required\");\r",
+							"});\r",
+							"\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {},
+						"requests": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "Oscar_55b50184-1ed8-4655-9b3b-537b7e9d2789",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"media_id\": \"fjeigcweoihgix\"\r\n}"
+				},
+				"url": {
+					"raw": "{{baseURL}}/api/media",
+					"host": [
+						"{{baseURL}}"
+					],
+					"path": [
+						"api",
+						"media"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Media Entry create invalid token",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 401\", function () {\r",
+							"    pm.response.to.have.status(401);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Response is JSON\", function () {\r",
+							"    pm.response.to.have.header(\"Content-Type\");\r",
+							"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\");\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Response has required fields\", function () {\r",
+							"    pm.expect(pm.response.json()).to.have.property(\"error\");\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Response fields have correct types\", function () {\r",
+							"    pm.expect(pm.response.json().error).to.be.a(\"string\");\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Error message is present\", function () {\r",
+							"    pm.expect(pm.response.json().error).to.include(\"invalid\");\r",
+							"});\r",
+							"\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {},
+						"requests": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "token",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"title\": \"frew\",\r\n    \"desc\": \"gtreg\",\r\n    \"releaseYear\": \"123\",\r\n    \"ageRestriction\": \"12\",\r\n    \"genres\": \"horror, comdey\"\r\n}"
+				},
+				"url": {
+					"raw": "{{baseURL}}/api/media",
+					"host": [
+						"{{baseURL}}"
+					],
+					"path": [
+						"api",
+						"media"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Media Entry update success",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 201\", function () {\r",
+							"    pm.response.to.have.status(201);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Response is JSON\", function () {\r",
+							"    pm.response.to.have.header(\"Content-Type\");\r",
+							"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\");\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Response has required fields\", function () {\r",
+							"    pm.expect(pm.response.json()).to.have.property(\"message\");\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Response fields have correct types\", function () {\r",
+							"    pm.expect(pm.response.json().message).to.be.a(\"string\");\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Success message is present\", function () {\r",
+							"    pm.expect(pm.response.json().message).to.include(\"updated\");\r",
+							"});\r",
+							"\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {},
+						"requests": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "Oscar_55b50184-1ed8-4655-9b3b-537b7e9d2789",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"media_id\" : \"0199f7e0-7a56-7713-9609-3160ff3b5172\",\r\n    \"title\": \"fast\",\r\n    \"desc\": \"very fast\",\r\n    \"releaseYear\": \"1800\",\r\n    \"ageRestriction\": \"12\",\r\n    \"genres\": \"horror, comedy, weee\"\r\n}"
+				},
+				"url": {
+					"raw": "{{baseURL}}/api/media",
+					"host": [
+						"{{baseURL}}"
+					],
+					"path": [
+						"api",
+						"media"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Media Entry update empty body",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 400\", function () {\r",
+							"    pm.response.to.have.status(400);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Response is JSON\", function () {\r",
+							"    pm.response.to.have.header(\"Content-Type\");\r",
+							"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\");\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Response has required fields\", function () {\r",
+							"    pm.expect(pm.response.json()).to.have.property(\"error\");\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Response fields have correct types\", function () {\r",
+							"    pm.expect(pm.response.json().error).to.be.a(\"string\");\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Success message is present\", function () {\r",
+							"    pm.expect(pm.response.json().error).to.include(\"empty\");\r",
+							"});\r",
+							"\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {},
+						"requests": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "Oscar_55b50184-1ed8-4655-9b3b-537b7e9d2789",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "{{baseURL}}/api/media",
+					"host": [
+						"{{baseURL}}"
+					],
+					"path": [
+						"api",
+						"media"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Media Entry update incorrect input",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 400\", function () {\r",
+							"    pm.response.to.have.status(400);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Response is JSON\", function () {\r",
+							"    pm.response.to.have.header(\"Content-Type\");\r",
+							"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\");\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Response has required fields\", function () {\r",
+							"    pm.expect(pm.response.json()).to.have.property(\"error\");\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Response fields have correct types\", function () {\r",
+							"    pm.expect(pm.response.json().error).to.be.a(\"string\");\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Success message is present\", function () {\r",
+							"    pm.expect(pm.response.json().error).to.include(\"required\");\r",
+							"});\r",
+							"\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {},
+						"requests": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "Oscar_55b50184-1ed8-4655-9b3b-537b7e9d2789",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"media_id\" : \"0199f7e0-7a56-7713-9609-3160ff3b5172\",\r\n    \"title\": \"frew\"\r\n}"
+				},
+				"url": {
+					"raw": "{{baseURL}}/api/media",
+					"host": [
+						"{{baseURL}}"
+					],
+					"path": [
+						"api",
+						"media"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Media Entry update invalid token",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 401\", function () {\r",
+							"    pm.response.to.have.status(401);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Response is JSON\", function () {\r",
+							"    pm.response.to.have.header(\"Content-Type\");\r",
+							"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\");\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Response has required fields\", function () {\r",
+							"    pm.expect(pm.response.json()).to.have.property(\"error\");\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Response fields have correct types\", function () {\r",
+							"    pm.expect(pm.response.json().error).to.be.a(\"string\");\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Error message is present\", function () {\r",
+							"    pm.expect(pm.response.json().error).to.include(\"invalid\");\r",
+							"});\r",
+							"\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {},
+						"requests": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "token",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"media_id\" : \"0199f65b-26cb-7a8c-bcff-4777547d41c4\",\r\n    \"title\": \"frew\",\r\n    \"desc\": \"gtreg\",\r\n    \"releaseYear\": \"123\",\r\n    \"ageRestriction\": \"12\",\r\n    \"genres\": \"horror, comdey\"\r\n}"
+				},
+				"url": {
+					"raw": "{{baseURL}}/api/media",
+					"host": [
+						"{{baseURL}}"
+					],
+					"path": [
+						"api",
+						"media"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Media Entry update unauthorised edit",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 401\", function () {\r",
+							"    pm.response.to.have.status(401);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Response is JSON\", function () {\r",
+							"    pm.response.to.have.header(\"Content-Type\");\r",
+							"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\");\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Response has required fields\", function () {\r",
+							"    pm.expect(pm.response.json()).to.have.property(\"error\");\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Response fields have correct types\", function () {\r",
+							"    pm.expect(pm.response.json().error).to.be.a(\"string\");\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Error message is present\", function () {\r",
+							"    pm.expect(pm.response.json().error).to.include(\"invalid\");\r",
+							"});\r",
+							"\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {},
+						"requests": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "Max_beba387a-2c2b-489f-ac62-d64e715c6b3a",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"media_id\" : \"0199f65b-26cb-7a8c-bcff-4777547d41c4\",\r\n    \"title\": \"frew\",\r\n    \"desc\": \"gtreg\",\r\n    \"releaseYear\": \"123\",\r\n    \"ageRestriction\": \"12\",\r\n    \"genres\": \"horror, comdey\"\r\n}"
+				},
+				"url": {
+					"raw": "{{baseURL}}/api/media",
+					"host": [
+						"{{baseURL}}"
+					],
+					"path": [
+						"api",
+						"media"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Media Entry delete success",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Response is JSON\", function () {\r",
+							"    pm.response.to.have.header(\"Content-Type\");\r",
+							"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\");\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Response has required fields\", function () {\r",
+							"    pm.expect(pm.response.json()).to.have.property(\"message\");\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Response fields have correct types\", function () {\r",
+							"    pm.expect(pm.response.json().message).to.be.a(\"string\");\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Success message is present\", function () {\r",
+							"    pm.expect(pm.response.json().message).to.include(\"deleted\");\r",
+							"});\r",
+							"\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {},
+						"requests": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "Oscar_55b50184-1ed8-4655-9b3b-537b7e9d2789",
+							"type": "string"
+						}
+					]
+				},
+				"method": "DELETE",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"media_id\" : \"0199fc4b-dccb-7d09-89cc-78e43c8ddf46\"\r\n}"
+				},
+				"url": {
+					"raw": "{{baseURL}}/api/media",
+					"host": [
+						"{{baseURL}}"
+					],
+					"path": [
+						"api",
+						"media"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Media Entry delete empty body",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 400\", function () {\r",
+							"    pm.response.to.have.status(400);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Response is JSON\", function () {\r",
+							"    pm.response.to.have.header(\"Content-Type\");\r",
+							"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\");\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Response has required fields\", function () {\r",
+							"    pm.expect(pm.response.json()).to.have.property(\"error\");\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Response fields have correct types\", function () {\r",
+							"    pm.expect(pm.response.json().error).to.be.a(\"string\");\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Success message is present\", function () {\r",
+							"    pm.expect(pm.response.json().error).to.include(\"empty\");\r",
+							"});\r",
+							"\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {},
+						"requests": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "Oscar_55b50184-1ed8-4655-9b3b-537b7e9d2789",
+							"type": "string"
+						}
+					]
+				},
+				"method": "DELETE",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "{{baseURL}}/api/media",
+					"host": [
+						"{{baseURL}}"
+					],
+					"path": [
+						"api",
+						"media"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Media Entry delete incorrect input",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 400\", function () {\r",
+							"    pm.response.to.have.status(400);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Response is JSON\", function () {\r",
+							"    pm.response.to.have.header(\"Content-Type\");\r",
+							"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\");\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Response has required fields\", function () {\r",
+							"    pm.expect(pm.response.json()).to.have.property(\"error\");\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Response fields have correct types\", function () {\r",
+							"    pm.expect(pm.response.json().error).to.be.a(\"string\");\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Success message is present\", function () {\r",
+							"    pm.expect(pm.response.json().error).to.include(\"required\");\r",
+							"});\r",
+							"\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {},
+						"requests": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "Oscar_55b50184-1ed8-4655-9b3b-537b7e9d2789",
+							"type": "string"
+						}
+					]
+				},
+				"method": "DELETE",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"title\": \"frew\"\r\n}"
+				},
+				"url": {
+					"raw": "{{baseURL}}/api/media",
+					"host": [
+						"{{baseURL}}"
+					],
+					"path": [
+						"api",
+						"media"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Media Entry delete invalid token",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 401\", function () {\r",
+							"    pm.response.to.have.status(401);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Response is JSON\", function () {\r",
+							"    pm.response.to.have.header(\"Content-Type\");\r",
+							"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\");\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Response has required fields\", function () {\r",
+							"    pm.expect(pm.response.json()).to.have.property(\"error\");\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Response fields have correct types\", function () {\r",
+							"    pm.expect(pm.response.json().error).to.be.a(\"string\");\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Error message is present\", function () {\r",
+							"    pm.expect(pm.response.json().error).to.include(\"invalid\");\r",
+							"});\r",
+							"\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {},
+						"requests": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "token",
+							"type": "string"
+						}
+					]
+				},
+				"method": "DELETE",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"media_id\" : \"0199f65b-26cb-7a8c-bcff-4777547d41c4\"\r\n}"
+				},
+				"url": {
+					"raw": "{{baseURL}}/api/media",
+					"host": [
+						"{{baseURL}}"
+					],
+					"path": [
+						"api",
+						"media"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Media Entry delete unauthorised",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 401\", function () {\r",
+							"    pm.response.to.have.status(401);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Response is JSON\", function () {\r",
+							"    pm.response.to.have.header(\"Content-Type\");\r",
+							"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\");\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Response has required fields\", function () {\r",
+							"    pm.expect(pm.response.json()).to.have.property(\"error\");\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Response fields have correct types\", function () {\r",
+							"    pm.expect(pm.response.json().error).to.be.a(\"string\");\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Error message is present\", function () {\r",
+							"    pm.expect(pm.response.json().error).to.include(\"unauthorized\");\r",
+							"});\r",
+							"\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {},
+						"requests": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "Max_470ecd6c-2d3c-42a2-9157-f8deafe483b6",
+							"type": "string"
+						}
+					]
+				},
+				"method": "DELETE",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"media_id\" : \"0199f7e0-7a56-7713-9609-3160ff3b5172\"\r\n}"
+				},
+				"url": {
+					"raw": "{{baseURL}}/api/media",
+					"host": [
+						"{{baseURL}}"
+					],
+					"path": [
+						"api",
+						"media"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Media Entry read success",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Response is JSON\", function () {\r",
+							"    pm.response.to.have.header(\"Content-Type\");\r",
+							"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\");\r",
+							"});\r",
+							"\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {},
+						"requests": {}
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "Oscar_55b50184-1ed8-4655-9b3b-537b7e9d2789",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "{{baseURL}}/api/media",
+					"host": [
+						"{{baseURL}}"
+					],
+					"path": [
+						"api",
+						"media"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Media Entry read invalid token",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 401\", function () {\r",
+							"    pm.response.to.have.status(401);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Response is JSON\", function () {\r",
+							"    pm.response.to.have.header(\"Content-Type\");\r",
+							"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\");\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Response has required fields\", function () {\r",
+							"    pm.expect(pm.response.json()).to.have.property(\"error\");\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Response fields have correct types\", function () {\r",
+							"    pm.expect(pm.response.json().error).to.be.a(\"string\");\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Success message is present\", function () {\r",
+							"    pm.expect(pm.response.json().error).to.include(\"invalid\");\r",
+							"});\r",
+							"\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {},
+						"requests": {}
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "token",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "{{baseURL}}/api/media",
+					"host": [
+						"{{baseURL}}"
+					],
+					"path": [
+						"api",
+						"media"
+					]
+				}
+			},
+			"response": []
+		},
+		{
 			"name": "login success",
 			"event": [
 				{
@@ -51,7 +1101,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n\t\"username\": \"Oscar\",\n    \"password\": \"818181\"\n}",
+					"raw": "{\n\t\"username\": \"Gab\",\n    \"password\": \"yyayyy\"\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -498,7 +1548,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n\t\"username\": \"Oscar\",\r\n    \"password\": \"818181\"\r\n}",
+					"raw": "{\r\n\t\"username\": \"Mini\",\r\n    \"password\": \"strone\"\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -746,7 +1796,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"username\" : \"Oscar\"\r\n}",
+					"raw": "{\r\n    \"username\" : \"user\"\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -900,1056 +1950,6 @@
 						"api",
 						"auth",
 						"register"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "Media Entry create success",
-			"event": [
-				{
-					"listen": "test",
-					"script": {
-						"exec": [
-							"pm.test(\"Status code is 201\", function () {\r",
-							"    pm.response.to.have.status(201);\r",
-							"});\r",
-							"\r",
-							"pm.test(\"Response is JSON\", function () {\r",
-							"    pm.response.to.have.header(\"Content-Type\");\r",
-							"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\");\r",
-							"});\r",
-							"\r",
-							"pm.test(\"Response has required fields\", function () {\r",
-							"    pm.expect(pm.response.json()).to.have.property(\"message\");\r",
-							"});\r",
-							"\r",
-							"pm.test(\"Response fields have correct types\", function () {\r",
-							"    pm.expect(pm.response.json().message).to.be.a(\"string\");\r",
-							"});\r",
-							"\r",
-							"pm.test(\"Success message is present\", function () {\r",
-							"    pm.expect(pm.response.json().message).to.include(\"created\");\r",
-							"});\r",
-							"\r",
-							""
-						],
-						"type": "text/javascript",
-						"packages": {},
-						"requests": {}
-					}
-				}
-			],
-			"request": {
-				"auth": {
-					"type": "bearer",
-					"bearer": [
-						{
-							"key": "token",
-							"value": "Oscar_55b50184-1ed8-4655-9b3b-537b7e9d2789",
-							"type": "string"
-						}
-					]
-				},
-				"method": "POST",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "{\r\n    \"title\": \"another one\",\r\n    \"desc\": \"this is a movie\",\r\n    \"releaseYear\": \"2020\",\r\n    \"ageRestriction\": \"0\",\r\n    \"genres\": \"comdey, bleep\"\r\n}"
-				},
-				"url": {
-					"raw": "{{baseURL}}/api/media",
-					"host": [
-						"{{baseURL}}"
-					],
-					"path": [
-						"api",
-						"media"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "Media Entry create empty body",
-			"event": [
-				{
-					"listen": "test",
-					"script": {
-						"exec": [
-							"pm.test(\"Status code is 400\", function () {\r",
-							"    pm.response.to.have.status(400);\r",
-							"});\r",
-							"\r",
-							"pm.test(\"Response is JSON\", function () {\r",
-							"    pm.response.to.have.header(\"Content-Type\");\r",
-							"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\");\r",
-							"});\r",
-							"\r",
-							"pm.test(\"Response has required fields\", function () {\r",
-							"    pm.expect(pm.response.json()).to.have.property(\"error\");\r",
-							"});\r",
-							"\r",
-							"pm.test(\"Response fields have correct types\", function () {\r",
-							"    pm.expect(pm.response.json().error).to.be.a(\"string\");\r",
-							"});\r",
-							"\r",
-							"pm.test(\"Error message is present\", function () {\r",
-							"    pm.expect(pm.response.json().error).to.include(\"empty\");\r",
-							"});\r",
-							"\r",
-							""
-						],
-						"type": "text/javascript",
-						"packages": {},
-						"requests": {}
-					}
-				}
-			],
-			"request": {
-				"auth": {
-					"type": "bearer",
-					"bearer": [
-						{
-							"key": "token",
-							"value": "Oscar_55b50184-1ed8-4655-9b3b-537b7e9d2789",
-							"type": "string"
-						}
-					]
-				},
-				"method": "POST",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": ""
-				},
-				"url": {
-					"raw": "{{baseURL}}/api/media",
-					"host": [
-						"{{baseURL}}"
-					],
-					"path": [
-						"api",
-						"media"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "Media Entry create incorrect input",
-			"event": [
-				{
-					"listen": "test",
-					"script": {
-						"exec": [
-							"pm.test(\"Status code is 400\", function () {\r",
-							"    pm.response.to.have.status(400);\r",
-							"});\r",
-							"\r",
-							"pm.test(\"Response is JSON\", function () {\r",
-							"    pm.response.to.have.header(\"Content-Type\");\r",
-							"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\");\r",
-							"});\r",
-							"\r",
-							"pm.test(\"Response has required fields\", function () {\r",
-							"    pm.expect(pm.response.json()).to.have.property(\"error\");\r",
-							"});\r",
-							"\r",
-							"pm.test(\"Response fields have correct types\", function () {\r",
-							"    pm.expect(pm.response.json().error).to.be.a(\"string\");\r",
-							"});\r",
-							"\r",
-							"pm.test(\"Error message is present\", function () {\r",
-							"    pm.expect(pm.response.json().error).to.include(\"required\");\r",
-							"});\r",
-							"\r",
-							""
-						],
-						"type": "text/javascript",
-						"packages": {},
-						"requests": {}
-					}
-				}
-			],
-			"request": {
-				"auth": {
-					"type": "bearer",
-					"bearer": [
-						{
-							"key": "token",
-							"value": "Oscar_55b50184-1ed8-4655-9b3b-537b7e9d2789",
-							"type": "string"
-						}
-					]
-				},
-				"method": "POST",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "{\r\n    \"media_id\": \"fjeigcweoihgix\"\r\n}"
-				},
-				"url": {
-					"raw": "{{baseURL}}/api/media",
-					"host": [
-						"{{baseURL}}"
-					],
-					"path": [
-						"api",
-						"media"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "Media Entry create invalid token",
-			"event": [
-				{
-					"listen": "test",
-					"script": {
-						"exec": [
-							"pm.test(\"Status code is 401\", function () {\r",
-							"    pm.response.to.have.status(401);\r",
-							"});\r",
-							"\r",
-							"pm.test(\"Response is JSON\", function () {\r",
-							"    pm.response.to.have.header(\"Content-Type\");\r",
-							"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\");\r",
-							"});\r",
-							"\r",
-							"pm.test(\"Response has required fields\", function () {\r",
-							"    pm.expect(pm.response.json()).to.have.property(\"error\");\r",
-							"});\r",
-							"\r",
-							"pm.test(\"Response fields have correct types\", function () {\r",
-							"    pm.expect(pm.response.json().error).to.be.a(\"string\");\r",
-							"});\r",
-							"\r",
-							"pm.test(\"Error message is present\", function () {\r",
-							"    pm.expect(pm.response.json().error).to.include(\"invalid\");\r",
-							"});\r",
-							"\r",
-							""
-						],
-						"type": "text/javascript",
-						"packages": {},
-						"requests": {}
-					}
-				}
-			],
-			"request": {
-				"auth": {
-					"type": "bearer",
-					"bearer": [
-						{
-							"key": "token",
-							"value": "token",
-							"type": "string"
-						}
-					]
-				},
-				"method": "POST",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "{\r\n    \"title\": \"frew\",\r\n    \"desc\": \"gtreg\",\r\n    \"releaseYear\": \"123\",\r\n    \"ageRestriction\": \"12\",\r\n    \"genres\": \"horror, comdey\"\r\n}"
-				},
-				"url": {
-					"raw": "{{baseURL}}/api/media",
-					"host": [
-						"{{baseURL}}"
-					],
-					"path": [
-						"api",
-						"media"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "Media Entry update success",
-			"event": [
-				{
-					"listen": "test",
-					"script": {
-						"exec": [
-							"pm.test(\"Status code is 201\", function () {\r",
-							"    pm.response.to.have.status(201);\r",
-							"});\r",
-							"\r",
-							"pm.test(\"Response is JSON\", function () {\r",
-							"    pm.response.to.have.header(\"Content-Type\");\r",
-							"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\");\r",
-							"});\r",
-							"\r",
-							"pm.test(\"Response has required fields\", function () {\r",
-							"    pm.expect(pm.response.json()).to.have.property(\"message\");\r",
-							"});\r",
-							"\r",
-							"pm.test(\"Response fields have correct types\", function () {\r",
-							"    pm.expect(pm.response.json().message).to.be.a(\"string\");\r",
-							"});\r",
-							"\r",
-							"pm.test(\"Success message is present\", function () {\r",
-							"    pm.expect(pm.response.json().message).to.include(\"updated\");\r",
-							"});\r",
-							"\r",
-							""
-						],
-						"type": "text/javascript",
-						"packages": {},
-						"requests": {}
-					}
-				}
-			],
-			"request": {
-				"auth": {
-					"type": "bearer",
-					"bearer": [
-						{
-							"key": "token",
-							"value": "Oscar_55b50184-1ed8-4655-9b3b-537b7e9d2789",
-							"type": "string"
-						}
-					]
-				},
-				"method": "PUT",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "{\r\n    \"media_id\" : \"0199f7a6-1c53-7e44-b52a-d639629a07ce\",\r\n    \"title\": \"fast\",\r\n    \"desc\": \"very fast\",\r\n    \"releaseYear\": \"1800\",\r\n    \"ageRestriction\": \"12\",\r\n    \"genres\": \"horror, comedy, weee\"\r\n}"
-				},
-				"url": {
-					"raw": "{{baseURL}}/api/media",
-					"host": [
-						"{{baseURL}}"
-					],
-					"path": [
-						"api",
-						"media"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "Media Entry update empty body",
-			"event": [
-				{
-					"listen": "test",
-					"script": {
-						"exec": [
-							"pm.test(\"Status code is 400\", function () {\r",
-							"    pm.response.to.have.status(400);\r",
-							"});\r",
-							"\r",
-							"pm.test(\"Response is JSON\", function () {\r",
-							"    pm.response.to.have.header(\"Content-Type\");\r",
-							"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\");\r",
-							"});\r",
-							"\r",
-							"pm.test(\"Response has required fields\", function () {\r",
-							"    pm.expect(pm.response.json()).to.have.property(\"error\");\r",
-							"});\r",
-							"\r",
-							"pm.test(\"Response fields have correct types\", function () {\r",
-							"    pm.expect(pm.response.json().error).to.be.a(\"string\");\r",
-							"});\r",
-							"\r",
-							"pm.test(\"Success message is present\", function () {\r",
-							"    pm.expect(pm.response.json().error).to.include(\"empty\");\r",
-							"});\r",
-							"\r",
-							""
-						],
-						"type": "text/javascript",
-						"packages": {},
-						"requests": {}
-					}
-				}
-			],
-			"request": {
-				"auth": {
-					"type": "bearer",
-					"bearer": [
-						{
-							"key": "token",
-							"value": "Oscar_55b50184-1ed8-4655-9b3b-537b7e9d2789",
-							"type": "string"
-						}
-					]
-				},
-				"method": "PUT",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": ""
-				},
-				"url": {
-					"raw": "{{baseURL}}/api/media",
-					"host": [
-						"{{baseURL}}"
-					],
-					"path": [
-						"api",
-						"media"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "Media Entry update incorrect input",
-			"event": [
-				{
-					"listen": "test",
-					"script": {
-						"exec": [
-							"pm.test(\"Status code is 400\", function () {\r",
-							"    pm.response.to.have.status(400);\r",
-							"});\r",
-							"\r",
-							"pm.test(\"Response is JSON\", function () {\r",
-							"    pm.response.to.have.header(\"Content-Type\");\r",
-							"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\");\r",
-							"});\r",
-							"\r",
-							"pm.test(\"Response has required fields\", function () {\r",
-							"    pm.expect(pm.response.json()).to.have.property(\"error\");\r",
-							"});\r",
-							"\r",
-							"pm.test(\"Response fields have correct types\", function () {\r",
-							"    pm.expect(pm.response.json().error).to.be.a(\"string\");\r",
-							"});\r",
-							"\r",
-							"pm.test(\"Success message is present\", function () {\r",
-							"    pm.expect(pm.response.json().error).to.include(\"required\");\r",
-							"});\r",
-							"\r",
-							""
-						],
-						"type": "text/javascript",
-						"packages": {},
-						"requests": {}
-					}
-				}
-			],
-			"request": {
-				"auth": {
-					"type": "bearer",
-					"bearer": [
-						{
-							"key": "token",
-							"value": "Oscar_55b50184-1ed8-4655-9b3b-537b7e9d2789",
-							"type": "string"
-						}
-					]
-				},
-				"method": "PUT",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "{\r\n    \"media_id\" : \"0199f7a6-1c53-7e44-b52a-d639629a07ce\",\r\n    \"title\": \"frew\"\r\n}"
-				},
-				"url": {
-					"raw": "{{baseURL}}/api/media",
-					"host": [
-						"{{baseURL}}"
-					],
-					"path": [
-						"api",
-						"media"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "Media Entry update invalid token",
-			"event": [
-				{
-					"listen": "test",
-					"script": {
-						"exec": [
-							"pm.test(\"Status code is 401\", function () {\r",
-							"    pm.response.to.have.status(401);\r",
-							"});\r",
-							"\r",
-							"pm.test(\"Response is JSON\", function () {\r",
-							"    pm.response.to.have.header(\"Content-Type\");\r",
-							"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\");\r",
-							"});\r",
-							"\r",
-							"pm.test(\"Response has required fields\", function () {\r",
-							"    pm.expect(pm.response.json()).to.have.property(\"error\");\r",
-							"});\r",
-							"\r",
-							"pm.test(\"Response fields have correct types\", function () {\r",
-							"    pm.expect(pm.response.json().error).to.be.a(\"string\");\r",
-							"});\r",
-							"\r",
-							"pm.test(\"Error message is present\", function () {\r",
-							"    pm.expect(pm.response.json().error).to.include(\"invalid\");\r",
-							"});\r",
-							"\r",
-							""
-						],
-						"type": "text/javascript",
-						"packages": {},
-						"requests": {}
-					}
-				}
-			],
-			"request": {
-				"auth": {
-					"type": "bearer",
-					"bearer": [
-						{
-							"key": "token",
-							"value": "token",
-							"type": "string"
-						}
-					]
-				},
-				"method": "PUT",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "{\r\n    \"media_id\" : \"0199f65b-26cb-7a8c-bcff-4777547d41c4\",\r\n    \"title\": \"frew\",\r\n    \"desc\": \"gtreg\",\r\n    \"releaseYear\": \"123\",\r\n    \"ageRestriction\": \"12\",\r\n    \"genres\": \"horror, comdey\"\r\n}"
-				},
-				"url": {
-					"raw": "{{baseURL}}/api/media",
-					"host": [
-						"{{baseURL}}"
-					],
-					"path": [
-						"api",
-						"media"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "Media Entry update unauthorised edit",
-			"event": [
-				{
-					"listen": "test",
-					"script": {
-						"exec": [
-							"pm.test(\"Status code is 401\", function () {\r",
-							"    pm.response.to.have.status(401);\r",
-							"});\r",
-							"\r",
-							"pm.test(\"Response is JSON\", function () {\r",
-							"    pm.response.to.have.header(\"Content-Type\");\r",
-							"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\");\r",
-							"});\r",
-							"\r",
-							"pm.test(\"Response has required fields\", function () {\r",
-							"    pm.expect(pm.response.json()).to.have.property(\"error\");\r",
-							"});\r",
-							"\r",
-							"pm.test(\"Response fields have correct types\", function () {\r",
-							"    pm.expect(pm.response.json().error).to.be.a(\"string\");\r",
-							"});\r",
-							"\r",
-							"pm.test(\"Error message is present\", function () {\r",
-							"    pm.expect(pm.response.json().error).to.include(\"invalid\");\r",
-							"});\r",
-							"\r",
-							""
-						],
-						"type": "text/javascript",
-						"packages": {},
-						"requests": {}
-					}
-				}
-			],
-			"request": {
-				"auth": {
-					"type": "bearer",
-					"bearer": [
-						{
-							"key": "token",
-							"value": "Max_beba387a-2c2b-489f-ac62-d64e715c6b3a",
-							"type": "string"
-						}
-					]
-				},
-				"method": "PUT",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "{\r\n    \"media_id\" : \"0199f65b-26cb-7a8c-bcff-4777547d41c4\",\r\n    \"title\": \"frew\",\r\n    \"desc\": \"gtreg\",\r\n    \"releaseYear\": \"123\",\r\n    \"ageRestriction\": \"12\",\r\n    \"genres\": \"horror, comdey\"\r\n}"
-				},
-				"url": {
-					"raw": "{{baseURL}}/api/media",
-					"host": [
-						"{{baseURL}}"
-					],
-					"path": [
-						"api",
-						"media"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "Media Entry delete success",
-			"event": [
-				{
-					"listen": "test",
-					"script": {
-						"exec": [
-							"pm.test(\"Status code is 200\", function () {\r",
-							"    pm.response.to.have.status(200);\r",
-							"});\r",
-							"\r",
-							"pm.test(\"Response is JSON\", function () {\r",
-							"    pm.response.to.have.header(\"Content-Type\");\r",
-							"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\");\r",
-							"});\r",
-							"\r",
-							"pm.test(\"Response has required fields\", function () {\r",
-							"    pm.expect(pm.response.json()).to.have.property(\"message\");\r",
-							"});\r",
-							"\r",
-							"pm.test(\"Response fields have correct types\", function () {\r",
-							"    pm.expect(pm.response.json().message).to.be.a(\"string\");\r",
-							"});\r",
-							"\r",
-							"pm.test(\"Success message is present\", function () {\r",
-							"    pm.expect(pm.response.json().message).to.include(\"deleted\");\r",
-							"});\r",
-							"\r",
-							""
-						],
-						"type": "text/javascript",
-						"packages": {},
-						"requests": {}
-					}
-				}
-			],
-			"request": {
-				"auth": {
-					"type": "bearer",
-					"bearer": [
-						{
-							"key": "token",
-							"value": "Oscar_55b50184-1ed8-4655-9b3b-537b7e9d2789",
-							"type": "string"
-						}
-					]
-				},
-				"method": "DELETE",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "{\r\n    \"media_id\" : \"0199f7a6-1c53-7e44-b52a-d639629a07ce\"\r\n}"
-				},
-				"url": {
-					"raw": "{{baseURL}}/api/media",
-					"host": [
-						"{{baseURL}}"
-					],
-					"path": [
-						"api",
-						"media"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "Media Entry delete empty body",
-			"event": [
-				{
-					"listen": "test",
-					"script": {
-						"exec": [
-							"pm.test(\"Status code is 400\", function () {\r",
-							"    pm.response.to.have.status(400);\r",
-							"});\r",
-							"\r",
-							"pm.test(\"Response is JSON\", function () {\r",
-							"    pm.response.to.have.header(\"Content-Type\");\r",
-							"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\");\r",
-							"});\r",
-							"\r",
-							"pm.test(\"Response has required fields\", function () {\r",
-							"    pm.expect(pm.response.json()).to.have.property(\"error\");\r",
-							"});\r",
-							"\r",
-							"pm.test(\"Response fields have correct types\", function () {\r",
-							"    pm.expect(pm.response.json().error).to.be.a(\"string\");\r",
-							"});\r",
-							"\r",
-							"pm.test(\"Success message is present\", function () {\r",
-							"    pm.expect(pm.response.json().error).to.include(\"empty\");\r",
-							"});\r",
-							"\r",
-							""
-						],
-						"type": "text/javascript",
-						"packages": {},
-						"requests": {}
-					}
-				}
-			],
-			"request": {
-				"auth": {
-					"type": "bearer",
-					"bearer": [
-						{
-							"key": "token",
-							"value": "Oscar_55b50184-1ed8-4655-9b3b-537b7e9d2789",
-							"type": "string"
-						}
-					]
-				},
-				"method": "DELETE",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": ""
-				},
-				"url": {
-					"raw": "{{baseURL}}/api/media",
-					"host": [
-						"{{baseURL}}"
-					],
-					"path": [
-						"api",
-						"media"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "Media Entry delete incorrect input",
-			"event": [
-				{
-					"listen": "test",
-					"script": {
-						"exec": [
-							"pm.test(\"Status code is 400\", function () {\r",
-							"    pm.response.to.have.status(400);\r",
-							"});\r",
-							"\r",
-							"pm.test(\"Response is JSON\", function () {\r",
-							"    pm.response.to.have.header(\"Content-Type\");\r",
-							"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\");\r",
-							"});\r",
-							"\r",
-							"pm.test(\"Response has required fields\", function () {\r",
-							"    pm.expect(pm.response.json()).to.have.property(\"error\");\r",
-							"});\r",
-							"\r",
-							"pm.test(\"Response fields have correct types\", function () {\r",
-							"    pm.expect(pm.response.json().error).to.be.a(\"string\");\r",
-							"});\r",
-							"\r",
-							"pm.test(\"Success message is present\", function () {\r",
-							"    pm.expect(pm.response.json().error).to.include(\"required\");\r",
-							"});\r",
-							"\r",
-							""
-						],
-						"type": "text/javascript",
-						"packages": {},
-						"requests": {}
-					}
-				}
-			],
-			"request": {
-				"auth": {
-					"type": "bearer",
-					"bearer": [
-						{
-							"key": "token",
-							"value": "Oscar_55b50184-1ed8-4655-9b3b-537b7e9d2789",
-							"type": "string"
-						}
-					]
-				},
-				"method": "DELETE",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "{\r\n    \"title\": \"frew\"\r\n}"
-				},
-				"url": {
-					"raw": "{{baseURL}}/api/media",
-					"host": [
-						"{{baseURL}}"
-					],
-					"path": [
-						"api",
-						"media"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "Media Entry delete invalid token",
-			"event": [
-				{
-					"listen": "test",
-					"script": {
-						"exec": [
-							"pm.test(\"Status code is 401\", function () {\r",
-							"    pm.response.to.have.status(401);\r",
-							"});\r",
-							"\r",
-							"pm.test(\"Response is JSON\", function () {\r",
-							"    pm.response.to.have.header(\"Content-Type\");\r",
-							"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\");\r",
-							"});\r",
-							"\r",
-							"pm.test(\"Response has required fields\", function () {\r",
-							"    pm.expect(pm.response.json()).to.have.property(\"error\");\r",
-							"});\r",
-							"\r",
-							"pm.test(\"Response fields have correct types\", function () {\r",
-							"    pm.expect(pm.response.json().error).to.be.a(\"string\");\r",
-							"});\r",
-							"\r",
-							"pm.test(\"Error message is present\", function () {\r",
-							"    pm.expect(pm.response.json().error).to.include(\"invalid\");\r",
-							"});\r",
-							"\r",
-							""
-						],
-						"type": "text/javascript",
-						"packages": {},
-						"requests": {}
-					}
-				}
-			],
-			"request": {
-				"auth": {
-					"type": "bearer",
-					"bearer": [
-						{
-							"key": "token",
-							"value": "token",
-							"type": "string"
-						}
-					]
-				},
-				"method": "DELETE",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "{\r\n    \"media_id\" : \"0199f65b-26cb-7a8c-bcff-4777547d41c4\"\r\n}"
-				},
-				"url": {
-					"raw": "{{baseURL}}/api/media",
-					"host": [
-						"{{baseURL}}"
-					],
-					"path": [
-						"api",
-						"media"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "Media Entry delete unauthorised",
-			"event": [
-				{
-					"listen": "test",
-					"script": {
-						"exec": [
-							"pm.test(\"Status code is 401\", function () {\r",
-							"    pm.response.to.have.status(401);\r",
-							"});\r",
-							"\r",
-							"pm.test(\"Response is JSON\", function () {\r",
-							"    pm.response.to.have.header(\"Content-Type\");\r",
-							"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\");\r",
-							"});\r",
-							"\r",
-							"pm.test(\"Response has required fields\", function () {\r",
-							"    pm.expect(pm.response.json()).to.have.property(\"error\");\r",
-							"});\r",
-							"\r",
-							"pm.test(\"Response fields have correct types\", function () {\r",
-							"    pm.expect(pm.response.json().error).to.be.a(\"string\");\r",
-							"});\r",
-							"\r",
-							"pm.test(\"Error message is present\", function () {\r",
-							"    pm.expect(pm.response.json().error).to.include(\"unauthorized\");\r",
-							"});\r",
-							"\r",
-							""
-						],
-						"type": "text/javascript",
-						"packages": {},
-						"requests": {}
-					}
-				}
-			],
-			"request": {
-				"auth": {
-					"type": "bearer",
-					"bearer": [
-						{
-							"key": "token",
-							"value": "Max_beba387a-2c2b-489f-ac62-d64e715c6b3a",
-							"type": "string"
-						}
-					]
-				},
-				"method": "DELETE",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "{\r\n    \"media_id\" : \"0199f7e0-7a56-7713-9609-3160ff3b5172\"\r\n}"
-				},
-				"url": {
-					"raw": "{{baseURL}}/api/media",
-					"host": [
-						"{{baseURL}}"
-					],
-					"path": [
-						"api",
-						"media"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "Media Entry read success",
-			"event": [
-				{
-					"listen": "test",
-					"script": {
-						"exec": [
-							"pm.test(\"Status code is 200\", function () {\r",
-							"    pm.response.to.have.status(200);\r",
-							"});\r",
-							"\r",
-							"pm.test(\"Response is JSON\", function () {\r",
-							"    pm.response.to.have.header(\"Content-Type\");\r",
-							"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\");\r",
-							"});\r",
-							"\r",
-							""
-						],
-						"type": "text/javascript",
-						"packages": {},
-						"requests": {}
-					}
-				}
-			],
-			"protocolProfileBehavior": {
-				"disableBodyPruning": true
-			},
-			"request": {
-				"auth": {
-					"type": "bearer",
-					"bearer": [
-						{
-							"key": "token",
-							"value": "Max_beba387a-2c2b-489f-ac62-d64e715c6b3a",
-							"type": "string"
-						}
-					]
-				},
-				"method": "GET",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": ""
-				},
-				"url": {
-					"raw": "{{baseURL}}/api/media",
-					"host": [
-						"{{baseURL}}"
-					],
-					"path": [
-						"api",
-						"media"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "Media Entry read invalid token",
-			"event": [
-				{
-					"listen": "test",
-					"script": {
-						"exec": [
-							"pm.test(\"Status code is 401\", function () {\r",
-							"    pm.response.to.have.status(401);\r",
-							"});\r",
-							"\r",
-							"pm.test(\"Response is JSON\", function () {\r",
-							"    pm.response.to.have.header(\"Content-Type\");\r",
-							"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\");\r",
-							"});\r",
-							"\r",
-							"pm.test(\"Response has required fields\", function () {\r",
-							"    pm.expect(pm.response.json()).to.have.property(\"error\");\r",
-							"});\r",
-							"\r",
-							"pm.test(\"Response fields have correct types\", function () {\r",
-							"    pm.expect(pm.response.json().error).to.be.a(\"string\");\r",
-							"});\r",
-							"\r",
-							"pm.test(\"Success message is present\", function () {\r",
-							"    pm.expect(pm.response.json().error).to.include(\"invalid\");\r",
-							"});\r",
-							"\r",
-							""
-						],
-						"type": "text/javascript",
-						"packages": {},
-						"requests": {}
-					}
-				}
-			],
-			"protocolProfileBehavior": {
-				"disableBodyPruning": true
-			},
-			"request": {
-				"auth": {
-					"type": "bearer",
-					"bearer": [
-						{
-							"key": "token",
-							"value": "token",
-							"type": "string"
-						}
-					]
-				},
-				"method": "GET",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": ""
-				},
-				"url": {
-					"raw": "{{baseURL}}/api/media",
-					"host": [
-						"{{baseURL}}"
-					],
-					"path": [
-						"api",
-						"media"
 					]
 				}
 			},
