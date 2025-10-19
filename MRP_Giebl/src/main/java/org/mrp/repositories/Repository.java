@@ -7,9 +7,8 @@ import java.util.UUID;
 
 public interface Repository {
 
-    //TODO DTO
-    public <T> void save(T t) throws SQLException;
-    public <T> void update(T t) throws SQLException;
-    public void delete(UUID id) throws SQLException;
-    public List<Map<String, Object>> get() throws SQLException;
+    <T> void save(T t) throws SQLException;
+    <T> void update(T t) throws SQLException;
+    void delete(UUID id) throws SQLException;
+    List<Map<String, Object>> get() throws SQLException;
 }

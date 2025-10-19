@@ -19,14 +19,18 @@ public class MediaService {
         authService = new AuthService();
     }
 
-
-    public void createMedia(HttpExchange exchange) throws IOException, SQLException {
+    public UUID validateToken(HttpExchange exchange) throws SQLException, IOException {
         UUID user_id = authService.validateToken(exchange);
 
         if (user_id == null) {
             JsonHelper.sendError(exchange, 401, "invalid token");
-            return;
         }
+        return user_id;
+    }
+
+    public void createMedia(HttpExchange exchange) throws IOException, SQLException {
+        UUID user_id = validateToken(exchange);
+        if(user_id==null){return;}
 
         //chk if response has body
         InputStream is  = exchange.getRequestBody();
@@ -101,12 +105,8 @@ public class MediaService {
     }
 
     public void read(HttpExchange exchange) throws IOException, SQLException {
-        UUID user_id = authService.validateToken(exchange);
 
-        if (user_id == null) {
-            JsonHelper.sendError(exchange, 401, "invalid token");
-            return;
-        }
+        if(validateToken(exchange) == null) {return;}
 
         List<Map<String, Object>> response = mediaRepository.get();
 
@@ -116,12 +116,8 @@ public class MediaService {
     }
 
     public void update(HttpExchange exchange) throws IOException, SQLException {
-        UUID user_id = authService.validateToken(exchange);
-
-        if (user_id == null) {
-            JsonHelper.sendError(exchange, 401, "invalid token");
-            return;
-        }
+        UUID user_id = validateToken(exchange);
+        if(user_id==null){return;}
 
         //chk if response has body
         InputStream is  = exchange.getRequestBody();
@@ -189,12 +185,8 @@ public class MediaService {
     }
 
     public void delete(HttpExchange exchange) throws IOException, SQLException {
-        UUID user_id = authService.validateToken(exchange);
-
-        if (user_id == null) {
-            JsonHelper.sendError(exchange, 401, "invalid token");
-            return;
-        }
+        UUID user_id = validateToken(exchange);
+        if(user_id==null){return;}
 
         //get info from exchange
         InputStream is  = exchange.getRequestBody();
