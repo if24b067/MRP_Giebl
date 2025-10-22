@@ -20,6 +20,7 @@ CREATE TABLE MediaEntries (
     creator UUID NOT NULL,
     release_year INT NOT NULL,
     age_restriction INT NOT NULL,
+    genres VARCHAR(255),
     FOREIGN KEY (creator) REFERENCES Users(user_id)
 );
 

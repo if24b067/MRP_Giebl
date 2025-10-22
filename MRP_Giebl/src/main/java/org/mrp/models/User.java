@@ -22,6 +22,12 @@ public class User {
         this.createdAt = createdAt;
     }
 
+    public User(UUID id, String username, String passwordHash) {
+        this.id = id;
+        this.username = username;
+        this.passwordHash = passwordHash;
+    }
+
     public UUID getId() { return id; }
 
     public String getUsername() { return username; }

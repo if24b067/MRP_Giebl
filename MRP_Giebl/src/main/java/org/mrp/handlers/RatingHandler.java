@@ -6,6 +6,7 @@ import org.mrp.services.RatingService;
 import org.mrp.utils.JsonHelper;
 
 import java.io.IOException;
+import java.sql.SQLException;
 
 public class RatingHandler implements HttpHandler {
     private RatingService ratingService;
@@ -31,6 +32,12 @@ public class RatingHandler implements HttpHandler {
             } else {
                 JsonHelper.sendError(exchange, 404, "Endpoint not found");
             }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            JsonHelper.sendError(exchange, 500, "error in Database");
+        } catch (IOException e) {
+            e.printStackTrace();
+            JsonHelper.sendError(exchange, 400, "unexpected input");
         } catch (Exception e) {
             e.printStackTrace();
             JsonHelper.sendError(exchange, 500, "Internal server error");

@@ -8,11 +8,10 @@ import org.mrp.utils.JsonHelper;
 import org.mrp.utils.UUIDv7Generator;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.sql.SQLException;
 import java.sql.Timestamp;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 
 public class AuthService {
@@ -23,7 +22,7 @@ public class AuthService {
     }
 
     //function to validate token and return UUID user
-    public UUID validateToken(HttpExchange exchange) throws SQLException {
+    public UUID validateToken(HttpExchange exchange) throws SQLException, IOException {
         String authHeader = exchange.getRequestHeaders().getFirst("Authorization");
 
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
@@ -32,7 +31,13 @@ public class AuthService {
 
         String token = authHeader.substring(7); // Remove "Bearer "
 
-        return userRepository.chkToken(token);
+        UUID user_id = userRepository.chkToken(token);
+        if (user_id == null) {
+            JsonHelper.sendError(exchange, 401, "invalid token");
+            return null;
+        }
+
+        return user_id;
     }
 
     public void register (HttpExchange exchange) throws IOException, SQLException {
@@ -78,8 +83,6 @@ public class AuthService {
         Map<String, Object> response = new HashMap<>();
         response.put("id", userId);
         response.put("username", username);
-        response.put("message", "User registered successfully");
-
         JsonHelper.sendResponse(exchange, 201, response);
     }
 
@@ -108,7 +111,6 @@ public class AuthService {
         //response
         Map<String, Object> response = new HashMap<>();
         response.put("token", token);
-        response.put("message", "User logged in successfully");
 
         JsonHelper.sendResponse(exchange, 200, response);
     }
@@ -121,10 +123,45 @@ public class AuthService {
     }
 
     public void update(HttpExchange exchange) throws IOException, SQLException {
-        Map<String, Object> response = new HashMap<>();
-        response.put("message", "Endpoint not yet further developed");
+        UUID user_id = validateToken(exchange);
+        if(user_id==null){return;}
 
-        JsonHelper.sendResponse(exchange, 418, response);
+        InputStream is  = exchange.getRequestBody();
+        if(is.available() == 0){
+            JsonHelper.sendError(exchange, 400, "request body is empty");
+            return;
+        }
+
+        Map<String, String> request = JsonHelper.parseRequest(exchange, Map.class);
+        String passwordOld = request.get("password_old");
+        String username = request.get("username");
+        String passwordNew = request.get("password_new");
+
+        if(username == null || username.trim().isEmpty() ||
+        passwordNew == null || passwordNew.trim().isEmpty() ||
+        passwordOld == null || passwordOld.trim().isEmpty()){
+            JsonHelper.sendError(exchange, 400, "valid input required");
+            return;
+        }
+
+        //chk whether old password matches
+        boolean correctPW = userRepository.chkPW(passwordOld, user_id);
+
+        if(!correctPW){
+            JsonHelper.sendError(exchange, 401, "unauthorized to edit user");
+            return;
+        }
+
+        String pwHash = BCrypt.withDefaults().hashToString(12, passwordNew.toCharArray());
+
+        User user = new User(user_id, username, pwHash);
+
+        userRepository.update(user);
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("username", username);
+
+        JsonHelper.sendResponse(exchange, 201, response);
     }
 
     public void delete(HttpExchange exchange) throws IOException, SQLException {

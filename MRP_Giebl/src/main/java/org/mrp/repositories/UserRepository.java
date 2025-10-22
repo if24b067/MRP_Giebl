@@ -9,7 +9,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
 
 
@@ -37,10 +36,15 @@ public class UserRepository implements Repository{
     }
 
     @Override
-    public <T> void update(T t) {
+    public <T> void update(T t) throws SQLException {
         if(t instanceof User) {
             User user = (User) t;
-            //update in db
+
+            db.update("UPDATE Users SET username = ?, password_hash = ? WHERE user_id = ?",
+                    user.getUsername(),
+                    user.getPasswordHash(),
+                    user.getId()
+                    );
         }
     }
 
@@ -50,7 +54,12 @@ public class UserRepository implements Repository{
     }
 
     @Override
-    public List<Map<String, Object>> get() {
+    public List<Object> getAll() throws SQLException {
+        return null;
+    }
+
+    @Override
+    public Object getOne(UUID id) throws SQLException {
         return null;
     }
 
@@ -70,10 +79,18 @@ public class UserRepository implements Repository{
     public UUID chkToken(String token) throws SQLException {
         ResultSet rs = db.query("SELECT (user_id) FROM Users WHERE token = ?", token);
         if(!rs.next()) {return null;}  //token not found
-        return UUID.fromString(rs.getString("user_id"));
+        return (UUID) rs.getObject("user_id");
     }
 
     public void saveToken(String token, String username) throws SQLException {
         db.update("UPDATE Users SET token = ? WHERE username = ?", token, username);
+    }
+
+    public boolean chkPW(String password, UUID user_id) throws SQLException {
+        ResultSet rs = db.query("SELECT (password_hash) FROM Users WHERE user_id = ?", user_id);
+        if(!rs.next()) {return false;}  //user not found
+        String pw_hash = rs.getString("password_hash");
+        BCrypt.Result result = BCrypt.verifyer().verify(password.toCharArray(), pw_hash);
+        return result.verified;
     }
 }

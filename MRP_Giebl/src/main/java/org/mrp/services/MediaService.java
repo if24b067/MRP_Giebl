@@ -19,17 +19,9 @@ public class MediaService {
         authService = new AuthService();
     }
 
-    public UUID validateToken(HttpExchange exchange) throws SQLException, IOException {
-        UUID user_id = authService.validateToken(exchange);
-
-        if (user_id == null) {
-            JsonHelper.sendError(exchange, 401, "invalid token");
-        }
-        return user_id;
-    }
 
     public void createMedia(HttpExchange exchange) throws IOException, SQLException {
-        UUID user_id = validateToken(exchange);
+        UUID user_id = authService.validateToken(exchange);
         if(user_id==null){return;}
 
         //chk if response has body
@@ -98,25 +90,36 @@ public class MediaService {
         //call repo function
         mediaRepository.save(mediaEntry);
 
-        Map<String, Object> response = new HashMap<>();
-        response.put("message", "Media Entry created");
-
-        JsonHelper.sendResponse(exchange, 201, response);
+        JsonHelper.sendResponse(exchange, 201, mediaEntry);
     }
 
     public void read(HttpExchange exchange) throws IOException, SQLException {
 
-        if(validateToken(exchange) == null) {return;}
+        if(authService.validateToken(exchange) == null) {return;}
 
-        List<Map<String, Object>> response = mediaRepository.get();
+        String path = exchange.getRequestURI().getPath();
+        String[] tmpValues = path.split("/");
 
-        //Map<UUID, Object> response = mediaEntries.stream().collect(Collectors.toMap(MediaEntry::getId, Function.identity()));
+        try{
+            UUID media_id = UUID.fromString(tmpValues[tmpValues.length-1]);
+            MediaEntry mediaEntry = (MediaEntry) mediaRepository.getOne(media_id);
 
-        JsonHelper.sendResponse(exchange, 200, response);
+            if(mediaEntry == null){
+                JsonHelper.sendError(exchange, 404, "Media not found");
+                return;
+            }
+
+            JsonHelper.sendResponse(exchange, 200, mediaEntry);
+
+        } catch (IllegalArgumentException exception){
+            List<Object> response = mediaRepository.getAll();
+
+            JsonHelper.sendResponse(exchange, 200, response);
+        }
     }
 
     public void update(HttpExchange exchange) throws IOException, SQLException {
-        UUID user_id = validateToken(exchange);
+        UUID user_id = authService.validateToken(exchange);
         if(user_id==null){return;}
 
         //chk if response has body
@@ -178,45 +181,41 @@ public class MediaService {
         //call repo function
         mediaRepository.update(mediaEntry);
 
-        Map<String, Object> response = new HashMap<>();
-        response.put("message", "Media Entry updated");
-
-        JsonHelper.sendResponse(exchange, 201, response);
+        JsonHelper.sendResponse(exchange, 201, mediaEntry);
     }
 
     public void delete(HttpExchange exchange) throws IOException, SQLException {
-        UUID user_id = validateToken(exchange);
+        UUID user_id = authService.validateToken(exchange);
         if(user_id==null){return;}
 
         //get info from exchange
-        InputStream is  = exchange.getRequestBody();
-        if(is.available() == 0){
-            JsonHelper.sendError(exchange, 400, "request body is empty");
-            return;
-        }
-        Map<String, String> request = JsonHelper.parseRequest(exchange, Map.class);
-        String media_id = request.get("media_id");
-
-        if(media_id == null || media_id.isEmpty()){
+        String path = exchange.getRequestURI().getPath();
+        String[] tmpValues = path.split("/");
+        UUID media_id = null;
+        try{
+            media_id = UUID.fromString(tmpValues[tmpValues.length-1]);
+        } catch (IllegalArgumentException exception){
             JsonHelper.sendError(exchange, 400, "media Id required");
             return;
         }
 
+        //chk whether entry exists
+        MediaEntry mediaEntry = (MediaEntry) mediaRepository.getOne(media_id);
+
+        if(mediaEntry == null) {
+            JsonHelper.sendError(exchange, 404, "Media entry not found");
+            return;
+        }
 
         //chk whether User is creator
-        boolean isCreator = mediaRepository.chkCreator(UUID.fromString(media_id), user_id);
+        boolean isCreator = mediaRepository.chkCreator(media_id, user_id);
 
         if(!isCreator){
             JsonHelper.sendError(exchange, 401, "unauthorized to delete post");
             return;
         }
 
-        //call repo function
-        mediaRepository.delete(UUID.fromString(media_id));
-
-        Map<String, Object> response = new HashMap<>();
-        response.put("message", "Media Entry deleted");
-
-        JsonHelper.sendResponse(exchange, 200, response);
+        mediaRepository.delete(media_id);
+        JsonHelper.sendResponse(exchange, 200, mediaEntry);
     }
 }

@@ -6,6 +6,7 @@ import org.mrp.services.MediaService;
 import org.mrp.utils.JsonHelper;
 
 import java.io.IOException;
+import java.sql.SQLException;
 
 public class MediaHandler implements HttpHandler {
     private MediaService mediaService;
@@ -31,6 +32,12 @@ public class MediaHandler implements HttpHandler {
             } else {
                 JsonHelper.sendError(exchange, 404, "Endpoint not found");
             }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            JsonHelper.sendError(exchange, 500, "error in Database");
+        } catch (IOException e) {
+            e.printStackTrace();
+            JsonHelper.sendError(exchange, 400, "unexpected input");
         } catch (Exception e) {
             e.printStackTrace();
             JsonHelper.sendError(exchange, 500, "Internal server error");
