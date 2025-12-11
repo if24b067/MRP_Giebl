@@ -20,12 +20,14 @@ public class User {
         this.username = username;
         this.passwordHash = passwordHash;
         this.createdAt = createdAt;
+        favourites = null;
     }
 
     public User(UUID id, String username, String passwordHash) {
         this.id = id;
         this.username = username;
         this.passwordHash = passwordHash;
+        favourites = null;
     }
 
     public UUID getId() { return id; }
@@ -37,6 +39,9 @@ public class User {
     public Timestamp getCreatedAt() { return createdAt; }
 
     public String getToken() { return token; }
-    public void SetToken(String token) { this.token = token; }
+    public void setToken(String token) { this.token = token; }
+
+    public List<MediaEntry> getFavourites() { return favourites; }
+    public void setFavourites(MediaEntry media) { favourites.add(media); }
 
 }

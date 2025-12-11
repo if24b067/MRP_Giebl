@@ -9,6 +9,7 @@ public class Rating {
     private UUID mediaEntry;
     private int starValue;
     private String comment;
+    private boolean visFlag;
     private Timestamp createdAt;
     private int likes;
 
@@ -20,6 +21,7 @@ public class Rating {
         this.starValue = starValue;
         this.comment = comment;
         this.createdAt = createdAt;
+        visFlag = false;
     }
 
     public UUID getCreator() {
@@ -42,5 +44,8 @@ public class Rating {
 
     public int getLikes() { return likes; }
     public void setLikes(int likes) { this.likes = likes; }
+
+    public boolean getVis() { return visFlag; }
+    public void setVis(boolean vis) { visFlag = vis; }
 
 }

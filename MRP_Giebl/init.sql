@@ -31,8 +31,18 @@ CREATE TABLE Ratings (
     media_entry UUID NOT NULL,
     star_value INT CHECK (star_value >= 1 AND star_value <= 5),
     comment VARCHAR(255),
+    vis_flag BOOLEAN,
     created_at TIMESTAMP NOT NULL,
     likes INT DEFAULT 0,
     FOREIGN KEY (creator) REFERENCES Users(user_id),
     FOREIGN KEY (media_entry) REFERENCES MediaEntries(media_id)
+);
+
+-- Create Favourites table
+CREATE TABLE Favourites (
+    fav_id UUID PRIMARY KEY,
+    media_entry UUID,
+    user UUID,
+    FOREIGN KEY (media_id) REFERENCES MediaEntries(media_id),
+    FOREIGN KEY (user_id) REFERENCES Users(user_id)
 );

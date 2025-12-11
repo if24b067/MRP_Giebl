@@ -72,9 +72,7 @@ public class MediaService {
 
         //validate input
         if (title == null || title.trim().isEmpty() ||
-                desc == null || desc.trim().isEmpty() /*||
-                releaseYear == null || ageRestriction == null ||
-                genres.isEmpty()*/) {
+                desc == null || desc.trim().isEmpty() ) {
             JsonHelper.sendError(exchange, 400, "Correct input required");
             return;
         }
