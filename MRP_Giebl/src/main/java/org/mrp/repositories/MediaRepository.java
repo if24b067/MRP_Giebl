@@ -1,6 +1,7 @@
 package org.mrp.repositories;
 
 import org.mrp.models.MediaEntry;
+import org.mrp.models.Rating;
 import org.mrp.utils.Database;
 import org.mrp.utils.UUIDv7Generator;
 
@@ -40,13 +41,14 @@ public class MediaRepository implements Repository{
 
     //save information in db
     @Override
-    public <T> void save(T t) throws SQLException {
+    public <T> UUID save(T t) throws SQLException {
+        UUID media_id = null;
         if(t instanceof MediaEntry) {
             MediaEntry mediaEntry = (MediaEntry) t;
 
             String genres = parseGenresToDB(mediaEntry.getGenres());
 
-            UUID user_id = db.insert("INSERT INTO MediaEntries (media_id, title, description, creator, release_year, age_restriction, genres) VALUES (?, ?, ?, ?, ?, ?, ?)",
+            media_id = db.insert("INSERT INTO MediaEntries (media_id, title, description, creator, release_year, age_restriction, genres) VALUES (?, ?, ?, ?, ?, ?, ?)",
                     mediaEntry.getTitle(),
                     mediaEntry.getDesc(),
                     mediaEntry.getCreator(),
@@ -56,6 +58,7 @@ public class MediaRepository implements Repository{
 
             );
         }
+        return media_id;
     }
 
     @Override
@@ -126,8 +129,13 @@ public class MediaRepository implements Repository{
 
 
     public int calcAvgScore(UUID media_id) {
-        return 0;
-    }
+//        int sum = 0;
+//        for(Rating r : ratings) {
+//            sum += r.getStarValue();
+//        }
+//        return sum / ratings.size();
+        return -1;
+    };
 
     public boolean chkCreator(UUID media_id, UUID user_id) throws SQLException {
         ResultSet rs = db.query("SELECT (creator) FROM MediaEntries WHERE media_id = ?",

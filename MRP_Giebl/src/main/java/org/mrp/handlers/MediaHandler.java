@@ -25,6 +25,8 @@ public class MediaHandler implements HttpHandler {
                 mediaService.createMedia(exchange);
             } else if ("PUT".equals(method)) {
                     mediaService.update(exchange);
+            } else if (path.contains("/score") && "GET".equals(method)) {
+                mediaService.getAvgRating(exchange);
             } else if ("GET".equals(method)) {
                 mediaService.read(exchange);
             } else if ("DELETE".equals(method)) {

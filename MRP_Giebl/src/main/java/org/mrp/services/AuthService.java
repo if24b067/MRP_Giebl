@@ -72,11 +72,11 @@ public class AuthService {
         //createMedia Timestamp
         Timestamp createdAt = new Timestamp(System.currentTimeMillis());
         //tmp hilfswert UUID
-        UUIDv7Generator uuidv7Generator = new UUIDv7Generator();
-        UUID userId = uuidv7Generator.randomUUID();
+//        UUIDv7Generator uuidv7Generator = new UUIDv7Generator();
+//        UUID userId = uuidv7Generator.randomUUID();
 
-        User user = new User(userId, username, pwHash, createdAt);
-        userRepository.save(user);
+        User user = new User(/*userId,*/ username, pwHash, createdAt);
+        UUID userId = userRepository.save(user);
 
 
         //response

@@ -23,16 +23,18 @@ public class UserRepository implements Repository{
 
     //save information in db
     @Override
-    public <T> void save(T t) throws SQLException {
+    public <T> UUID save(T t) throws SQLException {
+        UUID user_id = null;
         if(t instanceof User) {
             User user = (User) t;
             //save to db
-            UUID user_id = db.insert("INSERT INTO Users (user_id, username, password_hash, created_at) VALUES (?, ?, ?, ?)",
+            user_id = db.insert("INSERT INTO Users (user_id, username, password_hash, created_at) VALUES (?, ?, ?, ?)",
                     user.getUsername(),
                     user.getPasswordHash(),
                     LocalDate.now()
                     );
         }
+        return user_id;
     }
 
     @Override

@@ -30,8 +30,8 @@ public class MediaEntry {
     }
 
     public MediaEntry(String title, String desc, UUID creator, int releaseYear, int ageRestriction, List<String> genres) {
-        UUIDv7Generator uuidv7Generator = new UUIDv7Generator();
-        id = uuidv7Generator.randomUUID();
+//        UUIDv7Generator uuidv7Generator = new UUIDv7Generator();
+//        id = uuidv7Generator.randomUUID();
         this.title = title;
         this.desc = desc;
         this.creator = creator;

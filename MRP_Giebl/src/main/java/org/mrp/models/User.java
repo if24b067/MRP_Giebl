@@ -23,6 +23,14 @@ public class User {
         favourites = null;
     }
 
+    public User(String username, String passwordHash, Timestamp createdAt) {
+        id = null;
+        this.username = username;
+        this.passwordHash = passwordHash;
+        this.createdAt = createdAt;
+        favourites = null;
+    }
+
     public User(UUID id, String username, String passwordHash) {
         this.id = id;
         this.username = username;

@@ -2,9 +2,12 @@ package org.mrp.services;
 
 import com.sun.net.httpserver.HttpExchange;
 import org.mrp.models.MediaEntry;
+import org.mrp.models.Rating;
 import org.mrp.repositories.MediaRepository;
+import org.mrp.repositories.RatingRepository;
 import org.mrp.utils.JsonHelper;
 
+import javax.print.attribute.standard.Media;
 import java.io.IOException;
 import java.io.InputStream;
 import java.sql.SQLException;
@@ -86,9 +89,10 @@ public class MediaService {
         MediaEntry mediaEntry = new MediaEntry(title, desc, user_id, releaseYear, ageRestriction, genres);
 
         //call repo function
-        mediaRepository.save(mediaEntry);
+        UUID mediaId = mediaRepository.save(mediaEntry);
+        MediaEntry entry = (MediaEntry) mediaRepository.getOne(mediaId);
 
-        JsonHelper.sendResponse(exchange, 201, mediaEntry);
+        JsonHelper.sendResponse(exchange, 201, entry);
     }
 
     public void read(HttpExchange exchange) throws IOException, SQLException {
@@ -216,4 +220,33 @@ public class MediaService {
         mediaRepository.delete(media_id);
         JsonHelper.sendResponse(exchange, 200, mediaEntry);
     }
+
+    public void getAvgRating(HttpExchange exchange) throws IOException, SQLException {
+        if(authService.validateToken(exchange) == null) {return;}
+
+        String path = exchange.getRequestURI().getPath();
+        String[] tmpValues = path.split("/");
+
+        try{
+            UUID media_id = UUID.fromString(tmpValues[tmpValues.length-1]);
+            RatingRepository ratingRepository = new RatingRepository();
+            List<Object> response = ratingRepository.getAll();
+
+            float sum = 0;
+            for(Object o : response){
+                if(o instanceof Rating){
+                    Rating rating = (Rating) o;
+                    sum += rating.getStarValue();
+                }
+            }
+            float score = sum/response.size();
+            //TODO: correct Json response
+            String avgScore = JsonHelper.toJson(score);
+            JsonHelper.sendResponse(exchange, 200, avgScore);
+
+        } catch (IllegalArgumentException exception){
+            JsonHelper.sendError(exchange, 404, "Media not found");
+        }
+    }
+
 }
