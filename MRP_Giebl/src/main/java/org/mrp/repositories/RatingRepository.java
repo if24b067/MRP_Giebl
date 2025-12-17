@@ -26,13 +26,12 @@ public class RatingRepository implements Repository{
         if(t instanceof Rating) {
             Rating rating = (Rating) t;
 
-            rating_id = db.insert("INSERT INTO Ratings (rating_id, creator, media_entry, star_value, comment, created_at, likes, vis_flag) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+            rating_id = db.insert("INSERT INTO Ratings (rating_id, creator, media_entry, star_value, comment, created_at, vis_flag) VALUES ( ?, ?, ?, ?, ?, ?, ?)",
                     rating.getCreator(),
                     rating.getMediaEntry(),
                     rating.getStarValue(),
                     rating.getComment(),
                     LocalDate.now(),
-                    rating.getLikes(),
                     rating.getVis()
             );
         }
@@ -44,10 +43,9 @@ public class RatingRepository implements Repository{
         if(t instanceof Rating) {
             Rating rating = (Rating) t;
 
-            db.update("UPDATE Ratings SET star_value = ?, comment = ?, likes = ?, vis_flag = ? WHERE rating_id = ?",
+            db.update("UPDATE Ratings SET star_value = ?, comment = ?, vis_flag = ? WHERE rating_id = ?",
                     rating.getStarValue(),
                     rating.getComment(),
-                    rating.getLikes(),
                     rating.getVis(),
                     rating.getId()
             );
@@ -73,7 +71,6 @@ public class RatingRepository implements Repository{
                 rs.getInt("star_value"),
                 rs.getString("comment"),
                 rs.getTimestamp("created_at"),
-                rs.getInt("likes"),
                 rs.getBoolean("vis_flag")
             );
 
@@ -85,6 +82,8 @@ public class RatingRepository implements Repository{
 
     @Override
     public Object getOne(UUID id) throws SQLException {
+        //db.update("CREATE TABLE Likes ( like_id UUID PRIMARY KEY, rating_id UUID, user_id UUID, FOREIGN KEY (rating_id) REFERENCES Ratings(rating_id), FOREIGN KEY (user_id) REFERENCES Users(user_id));");
+
         ResultSet rs = db.query("SELECT * FROM Ratings WHERE rating_id = ?", id);
 
         if(rs.next())
@@ -96,7 +95,6 @@ public class RatingRepository implements Repository{
                 rs.getInt("star_value"),
                 rs.getString("comment"),
                 rs.getTimestamp("created_at"),
-                rs.getInt("likes"),
                 rs.getBoolean("vis_flag")
             );
 
@@ -120,4 +118,26 @@ public class RatingRepository implements Repository{
         );
     }
 
+    public boolean chkUserAndRating(UUID user_id, UUID rating_id) throws SQLException {
+        return db.exists("SELECT * FROM likes WHERE user_id = ? AND rating_id = ?",
+                user_id,
+                rating_id
+        );
+    }
+
+    public int getCntOfLikes(UUID id) throws SQLException {
+        ResultSet rs = db.query("SELECT COUNT(*) FROM likes WHERE rating_id = ?;", id);
+        int cnt = 0;
+        if (rs.next()) {
+            cnt = rs.getInt(1);
+        }
+        return cnt;
+    }
+
+    public void like(UUID user_id, UUID rating_id) throws SQLException {
+        UUID like_id = db.insert("INSERT INTO likes (like_id, user_id, rating_id) VALUES ( ?, ?, ?)",
+                user_id,
+                rating_id
+        );
+    }
 }

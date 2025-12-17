@@ -25,26 +25,24 @@ public class Rating {
 //        this.createdAt = createdAt;
 //        visFlag = false;
 //    }
-    public Rating(UUID id, UUID creator, UUID mediaEntry, int starValue, String comment, int likes, boolean visFlag) {
+    public Rating(UUID id, UUID creator, UUID mediaEntry, int starValue, String comment, boolean visFlag) {
         this.id = id;
         this.creator = creator;
         this.mediaEntry = mediaEntry;
         this.starValue = starValue;
         this.comment = comment;
-        this.likes = likes;
         this.visFlag = visFlag;
     }
 
-    public Rating(UUID creator, UUID mediaEntry, int starValue, String comment, int likes, boolean visFlag) {
+    public Rating(UUID creator, UUID mediaEntry, int starValue, String comment, boolean visFlag) {
         this.creator = creator;
         this.mediaEntry = mediaEntry;
         this.starValue = starValue;
         this.comment = comment;
-        this.likes = likes;
         this.visFlag = visFlag;
     }
 
-    public Rating(UUID id, UUID creator, UUID mediaEntry, int starValue, String comment, Timestamp createdAt,int likes, boolean visFlag) {
+    public Rating(UUID id, UUID creator, UUID mediaEntry, int starValue, String comment, Timestamp createdAt, boolean visFlag) {
         this.id = id;
         this.creator = creator;
         this.mediaEntry = mediaEntry;

@@ -21,8 +21,12 @@ public class RatingHandler implements HttpHandler {
         String path = exchange.getRequestURI().getPath();
 
         try {
-            if ("POST".equals(method)) {
+            if (path.endsWith("like") && "POST".equals(method)) {
+                ratingService.like(exchange);
+            } else if ("POST".equals(method)) {
                 ratingService.create(exchange);
+            } else if (path.contains("/likes") && "GET".equals(method)) {
+                    ratingService.cntLikes(exchange);
             } else if ("GET".equals(method)) {
                 ratingService.read(exchange);
             } else if ("PUT".equals(method)) {
