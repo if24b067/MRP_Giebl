@@ -1,6 +1,8 @@
 package org.mrp.repositories;
 
 import at.favre.lib.crypto.bcrypt.BCrypt;
+import org.mrp.models.MediaEntry;
+import org.mrp.models.Rating;
 import org.mrp.models.User;
 import org.mrp.utils.Database;
 import org.mrp.utils.UUIDv7Generator;
@@ -8,6 +10,7 @@ import org.mrp.utils.UUIDv7Generator;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -51,17 +54,44 @@ public class UserRepository implements Repository{
     }
 
     @Override
-    public void delete(UUID id) {
-        //delete in db
+    public void delete(UUID id) throws SQLException {
+        db.update("DELETE FROM Users WHERE user_id = ?", id);
     }
 
     @Override
     public List<Object> getAll() throws SQLException {
-        return null;
+        List<User> users = new ArrayList<>();
+        ResultSet rs = db.query("SELECT * FROM Users");
+
+        while (rs.next()) {
+
+            User user = new User(
+                    (UUID) rs.getObject("user_id"),
+                    rs.getString("username"),
+                    null,
+                    rs.getTimestamp("created_at")
+            );
+
+            users.add(user);
+        }
+
+        return new ArrayList<Object>(users);
     }
 
     @Override
     public Object getOne(UUID id) throws SQLException {
+        ResultSet rs = db.query("SELECT * FROM Users WHERE user_id = ?", id);
+
+        if(rs.next())
+        {
+
+            return new User(
+                    (UUID) rs.getObject("user_id"),
+                    rs.getString("username"),
+                    null,
+                    rs.getTimestamp("created_at")
+            );
+        }
         return null;
     }
 

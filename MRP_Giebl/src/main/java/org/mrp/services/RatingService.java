@@ -11,10 +11,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.sql.SQLException;
 import java.sql.Timestamp;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 public class RatingService {
     private RatingRepository ratingRepository;
@@ -92,15 +89,11 @@ public class RatingService {
             }
         }
 
-        //validate input
-        if (comment == null || comment.trim().isEmpty()) {
-            JsonHelper.sendError(exchange, 400, "Correct input required");
-            return;
-        }
-
-        if (comment.length() > 100) {
-            JsonHelper.sendError(exchange, 400, "input too long");
-            return;
+        if(comment != null) {
+            if (comment.length() > 100) {
+                JsonHelper.sendError(exchange, 400, "input too long");
+                return;
+            }
         }
 
         Rating rating = new Rating(creator, mediaId, starValue, comment, likes, visFlag);
@@ -127,12 +120,19 @@ public class RatingService {
                 return;
             }
 
+            if(!rating.getVis()) rating.setComment(null);
             JsonHelper.sendResponse(exchange, 200, rating);
 
         } catch (IllegalArgumentException exception){
-            List<Object> response = ratingRepository.getAll();
+            List<Object> ratings = ratingRepository.getAll();
 
-            JsonHelper.sendResponse(exchange, 200, response);
+            for(Object r : ratings){
+                if(r instanceof Rating rating){
+                    if(!rating.getVis()) rating.setComment(null);
+                }
+            }
+
+            JsonHelper.sendResponse(exchange, 200, ratings);
         }
     }
 

@@ -249,4 +249,29 @@ public class MediaService {
         }
     }
 
+    public void getAllRatings(HttpExchange exchange) throws IOException, SQLException {
+        if(authService.validateToken(exchange) == null) {return;}
+
+        String path = exchange.getRequestURI().getPath();
+        String[] tmpValues = path.split("/");
+
+        try{
+            UUID media_id = UUID.fromString(tmpValues[tmpValues.length-1]);
+            RatingRepository ratingRepository = new RatingRepository();
+            List<Object> ratings = ratingRepository.getAll();
+
+            //chk flag for visibility of comment
+            for(Object r : ratings){
+                if(r instanceof Rating rating){
+                    if(!rating.getVis()) rating.setComment(null);
+                }
+            }
+
+            JsonHelper.sendResponse(exchange, 200, ratings);
+
+        } catch (IllegalArgumentException exception){
+            JsonHelper.sendError(exchange, 404, "Media not found");
+        }
+    }
+
 }

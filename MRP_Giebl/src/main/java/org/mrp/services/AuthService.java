@@ -2,6 +2,8 @@ package org.mrp.services;
 
 import at.favre.lib.crypto.bcrypt.BCrypt;
 import com.sun.net.httpserver.HttpExchange;
+import org.mrp.models.MediaEntry;
+import org.mrp.models.Rating;
 import org.mrp.models.User;
 import org.mrp.repositories.UserRepository;
 import org.mrp.utils.JsonHelper;
@@ -71,11 +73,8 @@ public class AuthService {
         String pwHash = BCrypt.withDefaults().hashToString(12, password.toCharArray());
         //createMedia Timestamp
         Timestamp createdAt = new Timestamp(System.currentTimeMillis());
-        //tmp hilfswert UUID
-//        UUIDv7Generator uuidv7Generator = new UUIDv7Generator();
-//        UUID userId = uuidv7Generator.randomUUID();
 
-        User user = new User(/*userId,*/ username, pwHash, createdAt);
+        User user = new User(username, pwHash, createdAt);
         UUID userId = userRepository.save(user);
 
 
@@ -116,10 +115,12 @@ public class AuthService {
     }
 
     public void read(HttpExchange exchange) throws IOException, SQLException {
-        Map<String, Object> response = new HashMap<>();
-        response.put("message", "Endpoint not yet further developed");
+        UUID user_id = validateToken(exchange);
+        if(user_id==null){return;}
 
-        JsonHelper.sendResponse(exchange, 418, response);
+        User user = (User) userRepository.getOne(user_id);
+
+        JsonHelper.sendResponse(exchange, 200, user);
     }
 
     public void update(HttpExchange exchange) throws IOException, SQLException {
@@ -165,9 +166,11 @@ public class AuthService {
     }
 
     public void delete(HttpExchange exchange) throws IOException, SQLException {
-        Map<String, Object> response = new HashMap<>();
-        response.put("message", "Endpoint not yet further developed");
+        UUID user_id = validateToken(exchange);
+        if(user_id==null){return;}
 
-        JsonHelper.sendResponse(exchange, 418, response);
+        User user = (User) userRepository.getOne(user_id);
+        userRepository.delete(user_id);
+        JsonHelper.sendResponse(exchange, 200, user);
     }
 }
