@@ -1,13 +1,13 @@
 package org.mrp.services;
 
 import com.sun.net.httpserver.HttpExchange;
+import org.mrp.models.Fav;
 import org.mrp.models.MediaEntry;
 import org.mrp.models.Rating;
 import org.mrp.repositories.MediaRepository;
 import org.mrp.repositories.RatingRepository;
 import org.mrp.utils.JsonHelper;
 
-import javax.print.attribute.standard.Media;
 import java.io.IOException;
 import java.io.InputStream;
 import java.sql.SQLException;
@@ -38,6 +38,7 @@ public class MediaService {
         Map<String, String> request = JsonHelper.parseRequest(exchange, Map.class);
         String title = request.get("title");
         String desc = request.get("desc");
+        String type = request.get("type");
 
         Integer releaseYear = null;
         String releaseYearStr = request.get("releaseYear");
@@ -75,7 +76,9 @@ public class MediaService {
 
         //validate input
         if (title == null || title.trim().isEmpty() ||
-                desc == null || desc.trim().isEmpty() ) {
+                desc == null || desc.trim().isEmpty() ||
+                type == null || type.trim().isEmpty() ||
+                (!type.equals("MOVIE") && !type.equals("SERIES") && !type.equals("GAME"))) {
             JsonHelper.sendError(exchange, 400, "Correct input required");
             return;
         }
@@ -86,7 +89,7 @@ public class MediaService {
         }
 
 
-        MediaEntry mediaEntry = new MediaEntry(title, desc, user_id, releaseYear, ageRestriction, genres);
+        MediaEntry mediaEntry = new MediaEntry(title, desc, user_id, releaseYear, ageRestriction, genres, type);
 
         //call repo function
         UUID mediaId = mediaRepository.save(mediaEntry);
@@ -146,6 +149,7 @@ public class MediaService {
         //get rest of info if authorized
         String title = request.get("title");
         String desc = request.get("desc");
+        String type = request.get("type");
 
         Integer releaseYear = null;
         String releaseYearStr = request.get("releaseYear");
@@ -178,7 +182,19 @@ public class MediaService {
             return;
         }
 
-        MediaEntry mediaEntry = new MediaEntry(media_id, title, desc, user_id, releaseYear, ageRestriction, genres);
+        if (title == null || title.trim().isEmpty() ||
+                desc == null || desc.trim().isEmpty() ||
+                type == null || type.trim().isEmpty() ||
+                (!type.equals("MOVIE") && !type.equals("SERIES") && !type.equals("GAME"))) {
+            JsonHelper.sendError(exchange, 400, "Correct input required");
+            return;
+        }
+        if (title.length() > 30 || desc.length() > 100 || genres.size() > 10) {
+            JsonHelper.sendError(exchange, 400, "input too long");
+            return;
+        }
+
+        MediaEntry mediaEntry = new MediaEntry(media_id, title, desc, user_id, releaseYear, ageRestriction, genres, type);
 
         //call repo function
         mediaRepository.update(mediaEntry);
@@ -274,4 +290,114 @@ public class MediaService {
         }
     }
 
+    public void addFavourite(HttpExchange exchange) throws IOException, SQLException {
+        UUID user_id = authService.validateToken(exchange);
+        if(user_id==null){return;}
+
+        //chk if response has body
+        InputStream is  = exchange.getRequestBody();
+        if(is.available() == 0){
+            JsonHelper.sendError(exchange, 400, "request body is empty");
+            return;
+        }
+
+        //get info from exchange
+        Map<String, String> request = JsonHelper.parseRequest(exchange, Map.class);
+
+        UUID media_id = null;
+        String id = request.get("media_id");
+        if (id != null) {
+            try{
+                media_id = UUID.fromString(id);
+            }catch (IllegalArgumentException e){
+                JsonHelper.sendError(exchange, 400, "correct input required");
+                return;
+            }
+        }
+
+        if(!mediaRepository.chkEntry(media_id)) {
+            JsonHelper.sendError(exchange, 404, "media entry not found");
+            return;
+        }
+
+        if(mediaRepository.chkFav(media_id, user_id)) {
+            JsonHelper.sendError(exchange, 404, "entry already favourited");
+            return;
+        }
+
+        //call repo function
+        mediaRepository.saveFav(user_id, media_id);
+        List<Object> favourites = mediaRepository.getFav(user_id);
+
+        JsonHelper.sendResponse(exchange, 201, favourites);
+    }
+
+    public void remFavourite(HttpExchange exchange) throws IOException, SQLException {
+        UUID user_id = authService.validateToken(exchange);
+        if(user_id==null){return;}
+
+        String path = exchange.getRequestURI().getPath();
+        String[] tmpValues = path.split("/");
+
+        try{
+            UUID media_id = UUID.fromString(tmpValues[tmpValues.length-1]);
+            if(!mediaRepository.chkFav(media_id, user_id)) {
+                JsonHelper.sendError(exchange, 404, "media entry not found");
+                return;
+            }
+
+            mediaRepository.delFav(user_id, media_id);
+            List<Object> favourites = mediaRepository.getFav(user_id);
+
+            JsonHelper.sendResponse(exchange, 200, favourites);
+
+        } catch (IllegalArgumentException exception){
+            JsonHelper.sendError(exchange, 404, "correct input required");
+        }
+    }
+
+    public void readFav(HttpExchange exchange) throws IOException, SQLException {
+        UUID user_id = authService.validateToken(exchange);
+        if(user_id==null){return;}
+
+        List<Object> favourites = mediaRepository.getFav(user_id);
+
+        JsonHelper.sendResponse(exchange, 200, favourites);
+
+    }
+
+    public void getRecommendations(HttpExchange exchange) throws IOException, SQLException {
+        UUID user_id = authService.validateToken(exchange);
+        if(user_id==null){return;}
+
+        List<Object> favourites = mediaRepository.getFav(user_id);
+        List<String> genres = new ArrayList<>();
+        for( Object f : favourites){
+            if(f instanceof Fav fav){
+                UUID id = fav.getEntry_id();
+                MediaEntry entry = (MediaEntry) mediaRepository.getOne(fav.getEntry_id());
+                genres.addAll(entry.getGenres());
+            }
+        }
+
+        //determine most frequent genre
+        Map<String, Integer> genreCount = new HashMap<>();
+
+        for (String genre : genres) {
+            genreCount.put(genre, genreCount.getOrDefault(genre, 0) + 1);
+        }
+
+        String mostFrequentGenre = null;
+        int maxCount = 0;
+
+        for (Map.Entry<String, Integer> entry : genreCount.entrySet()) {
+            if (entry.getValue() > maxCount) {
+                maxCount = entry.getValue();
+                mostFrequentGenre = entry.getKey();
+            }
+        }
+
+        List<Object> recommendations = mediaRepository.getByGenre(mostFrequentGenre);
+        JsonHelper.sendResponse(exchange, 200, recommendations);
+    }
 }

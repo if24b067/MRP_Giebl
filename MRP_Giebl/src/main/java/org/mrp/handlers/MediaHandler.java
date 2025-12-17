@@ -21,7 +21,9 @@ public class MediaHandler implements HttpHandler {
         String path = exchange.getRequestURI().getPath();
 
         try {
-            if ("POST".equals(method)) {
+            if (path.endsWith("fav") && "POST".equals(method)) {
+                mediaService.addFavourite(exchange);
+            } else if ("POST".equals(method)) {
                 mediaService.createMedia(exchange);
             } else if ("PUT".equals(method)) {
                     mediaService.update(exchange);
@@ -29,8 +31,14 @@ public class MediaHandler implements HttpHandler {
                 mediaService.getAvgRating(exchange);
             } else if (path.contains("/ratings") && "GET".equals(method)) {
                 mediaService.getAllRatings(exchange);
+            } else if (path.contains("fav") && "GET".equals(method)) {
+                mediaService.readFav(exchange);
+            } else if (path.endsWith("rec") && "GET".equals(method)) {
+                mediaService.getRecommendations(exchange);
             } else if ("GET".equals(method)) {
                 mediaService.read(exchange);
+            } else if (path.contains("fav") && "DELETE".equals(method)) {
+                mediaService.remFavourite(exchange);
             } else if ("DELETE".equals(method)) {
                 mediaService.delete(exchange);
             } else {

@@ -102,6 +102,29 @@ public class RatingRepository implements Repository{
         return null;
     }
 
+    public List<Object> getOwn(UUID id) throws SQLException {
+        List<Rating> ratings = new ArrayList<>();
+        ResultSet rs = db.query("SELECT * FROM Ratings WHERE creator = ?", id);
+
+        while (rs.next()) {
+
+            Rating rating = new Rating(
+                    (UUID) rs.getObject("rating_id"),
+                    (UUID) rs.getObject("creator"),
+                    (UUID) rs.getObject("media_entry"),
+                    rs.getInt("star_value"),
+                    rs.getString("comment"),
+                    rs.getTimestamp("created_at"),
+                    rs.getBoolean("vis_flag")
+            );
+
+            ratings.add(rating);
+        }
+
+        return new ArrayList<Object>(ratings);
+    }
+
+
     public boolean chkCreator(UUID rating_id, UUID user_id) throws SQLException {
         ResultSet rs = db.query("SELECT (creator) FROM Ratings WHERE rating_id = ?",
                 rating_id);

@@ -14,11 +14,11 @@ public class MediaEntry {
     private int releaseYear;
     private int ageRestriction;
     private List<String> genres;
-    private List<Rating> ratings;
+    private String type;
 
     public MediaEntry() {}
 
-    public MediaEntry(UUID id, String title, String desc, UUID creator, int releaseYear, int ageRestriction, List<String> genres) {
+    public MediaEntry(UUID id, String title, String desc, UUID creator, int releaseYear, int ageRestriction, List<String> genres, String type) {
         this.id = id;
         this.title = title;
         this.desc = desc;
@@ -26,38 +26,28 @@ public class MediaEntry {
         this.releaseYear = releaseYear;
         this.ageRestriction = ageRestriction;
         this.genres = genres;
-        ratings = null;
+        this.type = type;
     }
 
-    public MediaEntry(String title, String desc, UUID creator, int releaseYear, int ageRestriction, List<String> genres) {
-//        UUIDv7Generator uuidv7Generator = new UUIDv7Generator();
-//        id = uuidv7Generator.randomUUID();
+    public MediaEntry(String title, String desc, UUID creator, int releaseYear, int ageRestriction, List<String> genres, String type) {
         this.title = title;
         this.desc = desc;
         this.creator = creator;
         this.releaseYear = releaseYear;
         this.ageRestriction = ageRestriction;
         this.genres = genres;
-        ratings = null;
+        this.type = type;
     }
 
-    public MediaEntry(UUID id, String title, String desc, UUID creator, int releaseYear, int ageRestriction) {
-        this.id = id;
-        this.title = title;
-        this.desc = desc;
-        this.creator = creator;
-        this.releaseYear = releaseYear;
-        this.ageRestriction = ageRestriction;
-        genres = null;
-    }
-
-    public int calcAvgScore() {
-        int sum = 0;
-        for(Rating r : ratings) {
-            sum += r.getStarValue();
-        }
-        return sum / ratings.size();
-    };
+//    public MediaEntry(UUID id, String title, String desc, UUID creator, int releaseYear, int ageRestriction) {
+//        this.id = id;
+//        this.title = title;
+//        this.desc = desc;
+//        this.creator = creator;
+//        this.releaseYear = releaseYear;
+//        this.ageRestriction = ageRestriction;
+//        genres = null;
+//    }
 
     public UUID getId() { return id; }
     public void setId(UUID id) {}
@@ -79,6 +69,6 @@ public class MediaEntry {
     public List<String> getGenres() { return genres; }
     public void setGenres(String genre) { genres.add(genre); }
 
-    public List<Rating> getRatings() { return ratings; }
-    public void setRatings(Rating rating) { ratings.add(rating); }
+    public String getType() { return type; }
+    public void setType(String type) { this.type = type; }
 }

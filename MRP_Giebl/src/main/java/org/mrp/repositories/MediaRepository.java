@@ -1,7 +1,7 @@
 package org.mrp.repositories;
 
+import org.mrp.models.Fav;
 import org.mrp.models.MediaEntry;
-import org.mrp.models.Rating;
 import org.mrp.utils.Database;
 import org.mrp.utils.UUIDv7Generator;
 
@@ -48,13 +48,14 @@ public class MediaRepository implements Repository{
 
             String genres = parseGenresToDB(mediaEntry.getGenres());
 
-            media_id = db.insert("INSERT INTO MediaEntries (media_id, title, description, creator, release_year, age_restriction, genres) VALUES (?, ?, ?, ?, ?, ?, ?)",
+            media_id = db.insert("INSERT INTO MediaEntries (media_id, title, description, creator, release_year, age_restriction, genres, type) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
                     mediaEntry.getTitle(),
                     mediaEntry.getDesc(),
                     mediaEntry.getCreator(),
                     mediaEntry.getReleaseYear(),
                     mediaEntry.getAgeRestriction(),
-                    genres
+                    genres,
+                    mediaEntry.getType()
 
             );
         }
@@ -68,12 +69,13 @@ public class MediaRepository implements Repository{
 
             String genres = parseGenresToDB(mediaEntry.getGenres());
 
-            db.update("UPDATE MediaEntries SET title = ?, description = ?, release_year = ?, age_restriction = ?, genres = ? WHERE media_id = ?",
+            db.update("UPDATE MediaEntries SET title = ?, description = ?, release_year = ?, age_restriction = ?, genres = ?, type = ? WHERE media_id = ?",
                     mediaEntry.getTitle(),
                     mediaEntry.getDesc(),
                     mediaEntry.getReleaseYear(),
                     mediaEntry.getAgeRestriction(),
                     genres,
+                    mediaEntry.getType(),
                     mediaEntry.getId()
             );
         }
@@ -100,7 +102,9 @@ public class MediaRepository implements Repository{
                     (UUID) rs.getObject("creator"),
                     rs.getInt("release_year"),
                     rs.getInt("age_restriction"),
-                    genres);
+                    genres,
+                    rs.getString("type")
+                    );
 
             mediaEntries.add(mediaEntry);
         }
@@ -122,20 +126,11 @@ public class MediaRepository implements Repository{
                     (UUID) rs.getObject("creator"),
                     rs.getInt("release_year"),
                     rs.getInt("age_restriction"),
-                    genres);
+                    genres,
+                    rs.getString("type"));
         }
         return null;
     }
-
-
-    public int calcAvgScore(UUID media_id) {
-//        int sum = 0;
-//        for(Rating r : ratings) {
-//            sum += r.getStarValue();
-//        }
-//        return sum / ratings.size();
-        return -1;
-    };
 
     public boolean chkCreator(UUID media_id, UUID user_id) throws SQLException {
         ResultSet rs = db.query("SELECT (creator) FROM MediaEntries WHERE media_id = ?",
@@ -144,6 +139,72 @@ public class MediaRepository implements Repository{
         String creatorId = rs.getString("creator");
         String userId = user_id.toString();
         return Objects.equals(userId, creatorId);
+    }
+
+    public void saveFav(UUID user_id, UUID media_id) throws SQLException {
+        UUID fav_id = db.insert("INSERT INTO favourites (fav_id, media_entry, user_id) VALUES (?, ?, ?)",
+                media_id,
+                user_id
+        );
+    }
+
+    public void delFav(UUID user_id, UUID media_id) throws SQLException {
+        db.update("DELETE FROM favourites WHERE media_entry = ? AND user_id = ?;",
+                media_id,
+                user_id
+        );
+    }
+
+    public boolean chkEntry(UUID id) throws SQLException {
+        return db.exists("SELECT * FROM mediaentries WHERE media_id = ?", id);
+    }
+
+    public boolean chkFav(UUID media_id, UUID user_id) throws SQLException {
+        return db.exists("SELECT * FROM favourites WHERE media_entry = ? AND user_id = ?",
+                media_id, user_id);
+    }
+
+    public List<Object> getFav(UUID user_id) throws SQLException {
+        List<Fav> favourites = new ArrayList<>();
+        ResultSet rs = db.query("SELECT * FROM favourites WHERE user_id = ?", user_id);
+
+        while (rs.next()) {
+
+            Fav fav = new Fav(
+                    (UUID) rs.getObject("fav_id"),
+                    (UUID) rs.getObject("user_id"),
+                    (UUID) rs.getObject("media_entry")
+            );
+
+            favourites.add(fav);
+        }
+
+        return new ArrayList<Object>(favourites);
+    }
+
+    public List<Object> getByGenre(String genre) throws SQLException {
+        List<MediaEntry> mediaEntries = new ArrayList<>();
+        genre = "%"+genre+"%";
+        ResultSet rs = db.query("SELECT * FROM MediaEntries WHERE genres LIKE ? LIMIT 5", genre);
+
+        while (rs.next()) {
+
+            List<String> genres = parseGenresFromDB(rs.getString("genres"));
+
+            MediaEntry mediaEntry = new  MediaEntry(
+                    (UUID) rs.getObject("media_id"),
+                    rs.getString("title"),
+                    rs.getString("description"),
+                    (UUID) rs.getObject("creator"),
+                    rs.getInt("release_year"),
+                    rs.getInt("age_restriction"),
+                    genres,
+                    rs.getString("type"));
+
+            mediaEntries.add(mediaEntry);
+        }
+
+        return new ArrayList<Object>(mediaEntries);
     }
 }
 

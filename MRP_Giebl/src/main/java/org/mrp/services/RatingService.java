@@ -92,7 +92,8 @@ public class RatingService {
     }
 
     public void read(HttpExchange exchange) throws IOException, SQLException {
-        if(authService.validateToken(exchange) == null) {return;}
+        UUID user_id = authService.validateToken(exchange);
+        if(user_id==null){return;}
 
         String path = exchange.getRequestURI().getPath();
         String[] tmpValues = path.split("/");
@@ -110,6 +111,11 @@ public class RatingService {
             JsonHelper.sendResponse(exchange, 200, rating);
 
         } catch (IllegalArgumentException exception){
+            if(Objects.equals(tmpValues[tmpValues.length - 1], "own")){
+                List<Object> ratings = ratingRepository.getOwn(user_id);
+                JsonHelper.sendResponse(exchange, 200, ratings);
+                return;
+            }
             List<Object> ratings = ratingRepository.getAll();
 
             for(Object r : ratings){
@@ -264,7 +270,7 @@ public class RatingService {
             }
         }
 
-        //chk whether user has already rated entry
+        //chk whether user has already liked rating
         if (ratingRepository.chkUserAndRating(user_id, rating_id)) {
             JsonHelper.sendError(exchange, 400, "already liked this rating");
             return;
