@@ -39,6 +39,30 @@ public class MediaRepository implements Repository{
         return genres;
     }
 
+    private List<Object> parseRS(ResultSet rs) throws SQLException {
+        List<MediaEntry> mediaEntries = new ArrayList<>();
+
+        while (rs.next()) {
+
+            List<String> genres = parseGenresFromDB(rs.getString("genres"));
+
+            MediaEntry mediaEntry = new  MediaEntry(
+                    (UUID) rs.getObject("media_id"),
+                    rs.getString("title"),
+                    rs.getString("description"),
+                    (UUID) rs.getObject("creator"),
+                    rs.getInt("release_year"),
+                    rs.getInt("age_restriction"),
+                    genres,
+                    rs.getString("type")
+            );
+
+            mediaEntries.add(mediaEntry);
+        }
+
+        return new ArrayList<Object>(mediaEntries);
+    }
+
     //save information in db
     @Override
     public <T> UUID save(T t) throws SQLException {
@@ -204,6 +228,46 @@ public class MediaRepository implements Repository{
             mediaEntries.add(mediaEntry);
         }
 
+        return new ArrayList<Object>(mediaEntries);
+    }
+
+    public List<Object> getByTitle(String title) throws SQLException {
+        List<MediaEntry> mediaEntries = new ArrayList<>();
+        title = "%"+title+"%";
+        ResultSet rs = db.query("SELECT * FROM MediaEntries WHERE title LIKE ?", title);
+
+        while (rs.next()) {
+
+            List<String> genres = parseGenresFromDB(rs.getString("genres"));
+
+            MediaEntry mediaEntry = new  MediaEntry(
+                    (UUID) rs.getObject("media_id"),
+                    rs.getString("title"),
+                    rs.getString("description"),
+                    (UUID) rs.getObject("creator"),
+                    rs.getInt("release_year"),
+                    rs.getInt("age_restriction"),
+                    genres,
+                    rs.getString("type"));
+
+            mediaEntries.add(mediaEntry);
+        }
+
+        return new ArrayList<Object>(mediaEntries);
+    }
+
+    public List<Object> sorted(char flag) throws SQLException {
+        List<MediaEntry> mediaEntries = new ArrayList<>();
+        //ResultSet rs = db.query("SELECT * FROM MediaEntries WHERE title LIKE ?", title);
+
+        if(flag == 't') return parseRS(db.query("SELECT * FROM MediaEntries ORDER BY title"));
+        else if(flag == 'y') return parseRS(db.query("SELECT * FROM MediaEntries ORDER BY release_year"));
+        else return new ArrayList<>();
+        //return new ArrayList<Object>(mediaEntries);
+    }
+
+    public List<Object> sortedByScore() throws SQLException {
+        List<MediaEntry> mediaEntries = new ArrayList<>();
         return new ArrayList<Object>(mediaEntries);
     }
 }

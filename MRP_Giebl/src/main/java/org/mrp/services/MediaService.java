@@ -400,4 +400,64 @@ public class MediaService {
         List<Object> recommendations = mediaRepository.getByGenre(mostFrequentGenre);
         JsonHelper.sendResponse(exchange, 200, recommendations);
     }
+
+    public void searchByTitle(HttpExchange exchange) throws IOException, SQLException {
+        if(authService.validateToken(exchange) == null) {return;}
+
+        String path = exchange.getRequestURI().getPath();
+        String[] tmpValues = path.split("/");
+
+        String title = tmpValues[tmpValues.length-1];
+        List<Object> mediaEntries = mediaRepository.getByTitle(title);
+
+        if(mediaEntries.isEmpty()){
+            JsonHelper.sendResponse(exchange, 404, mediaEntries);
+            return;
+        }
+
+        JsonHelper.sendResponse(exchange, 200, mediaEntries);
+    }
+
+    public void sort(HttpExchange exchange, char TitleOrYear) throws IOException, SQLException {
+        if(authService.validateToken(exchange) == null) {return;}
+
+//        String path = exchange.getRequestURI().getPath();
+//        String[] tmpValues = path.split("/");
+//
+//        String title = tmpValues[tmpValues.length-1];
+        List<Object> mediaEntries = mediaRepository.sorted(TitleOrYear);
+
+        if(mediaEntries.isEmpty()){
+            JsonHelper.sendResponse(exchange, 404, mediaEntries);
+            return;
+        }
+
+        JsonHelper.sendResponse(exchange, 200, mediaEntries);
+    }
+
+//    public void sortByYear(HttpExchange exchange) throws IOException, SQLException {
+//        if(authService.validateToken(exchange) == null) {return;}
+//
+//        String path = exchange.getRequestURI().getPath();
+//        String[] tmpValues = path.split("/");
+//
+//        try{
+//            int title = Integer.parseInt(tmpValues[tmpValues.length-1]);
+//            List<Object> mediaEntries = mediaRepository.sortedByYear(title);
+//
+//            if(mediaEntries.isEmpty()){
+//                JsonHelper.sendResponse(exchange, 404, mediaEntries);
+//                return;
+//            }
+//
+//            JsonHelper.sendResponse(exchange, 200, mediaEntries);
+//
+//        } catch (IllegalArgumentException exception){
+//            JsonHelper.sendError(exchange, 400, "correct input required");
+//        }
+//    }
+
+    public void sortByScore(HttpExchange exchange) throws IOException, SQLException {
+        //TODO
+    }
 }
