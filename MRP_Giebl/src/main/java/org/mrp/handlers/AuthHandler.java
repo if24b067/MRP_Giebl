@@ -16,6 +16,10 @@ public class AuthHandler implements HttpHandler {
         this.authService = new AuthService();
     }
 
+    public AuthHandler(AuthService authService) {
+        this.authService = authService != null ? authService : new AuthService();
+    }
+
     @Override
     public void handle(HttpExchange exchange) throws IOException {
         String method = exchange.getRequestMethod();

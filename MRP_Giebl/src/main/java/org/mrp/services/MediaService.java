@@ -1,7 +1,6 @@
 package org.mrp.services;
 
 import com.sun.net.httpserver.HttpExchange;
-import org.mrp.models.Fav;
 import org.mrp.models.MediaEntry;
 import org.mrp.models.Rating;
 import org.mrp.repositories.MediaRepository;
@@ -366,40 +365,92 @@ public class MediaService {
 
     }
 
-    public void getRecommendations(HttpExchange exchange) throws IOException, SQLException {
-        UUID user_id = authService.validateToken(exchange);
-        if(user_id==null){return;}
+//    public void getRecommendations(HttpExchange exchange) throws IOException, SQLException {
+//        UUID user_id = authService.validateToken(exchange);
+//        if(user_id==null){return;}
+//
+//        List<Object> favourites = mediaRepository.getFav(user_id);
+//        List<String> genres = new ArrayList<>();
+//        for( Object f : favourites){
+//            if(f instanceof Fav fav){
+//                //UUID id = fav.getEntry_id();
+//                MediaEntry entry = (MediaEntry) mediaRepository.getOne(fav.getEntry_id());
+//                genres.addAll(entry.getGenres());
+//            }
+//        }
+//
+//        //determine most frequent genre
+//        Map<String, Integer> genreCount = new HashMap<>();
+//
+//        for (String genre : genres) {
+//            genreCount.put(genre, genreCount.getOrDefault(genre, 0) + 1);
+//        }
+//
+//        String mostFrequentGenre = null;
+//        int maxCount = 0;
+//
+//        for (Map.Entry<String, Integer> entry : genreCount.entrySet()) {
+//            if (entry.getValue() > maxCount) {
+//                maxCount = entry.getValue();
+//                mostFrequentGenre = entry.getKey();
+//            }
+//        }
+//
+//        List<Object> recommendations = mediaRepository.getByGenre(mostFrequentGenre);
+//        JsonHelper.sendResponse(exchange, 200, recommendations);
+//    }
 
-        List<Object> favourites = mediaRepository.getFav(user_id);
-        List<String> genres = new ArrayList<>();
-        for( Object f : favourites){
-            if(f instanceof Fav fav){
-                UUID id = fav.getEntry_id();
-                MediaEntry entry = (MediaEntry) mediaRepository.getOne(fav.getEntry_id());
-                genres.addAll(entry.getGenres());
-            }
-        }
-
-        //determine most frequent genre
+    private String getMostFrequent(List<String> attribute) {
         Map<String, Integer> genreCount = new HashMap<>();
-
-        for (String genre : genres) {
-            genreCount.put(genre, genreCount.getOrDefault(genre, 0) + 1);
+        for (String a : attribute) {
+            genreCount.put(a, genreCount.getOrDefault(a, 0) + 1);
         }
 
-        String mostFrequentGenre = null;
+        String mostFrequent = "";
         int maxCount = 0;
 
         for (Map.Entry<String, Integer> entry : genreCount.entrySet()) {
             if (entry.getValue() > maxCount) {
                 maxCount = entry.getValue();
-                mostFrequentGenre = entry.getKey();
+                mostFrequent = entry.getKey();
             }
         }
 
-        List<Object> recommendations = mediaRepository.getByGenre(mostFrequentGenre);
+        return mostFrequent;
+    }
+
+    public void getRecommendations(HttpExchange exchange) throws IOException, SQLException {
+        UUID user_id = authService.validateToken(exchange);
+        if(user_id==null){return;}
+
+        List<List<String>> preferences = mediaRepository.getUserPreferences(user_id);
+        List<String> genres = preferences.get(0);
+        List<String> mediaTypes = preferences.get(1);
+        List<String> ageRestrictions = preferences.get(2);
+
+        if(mediaTypes.isEmpty() || genres.isEmpty() || ageRestrictions.isEmpty()){
+            JsonHelper.sendResponse(exchange, 200, genres);
+            return;
+        }
+
+        //determine most frequent genre
+        String mostFrequentGenre = getMostFrequent(genres);
+
+        //determine most frequent mediaType
+        String mostFrequentMediaType = getMostFrequent(mediaTypes);
+
+        //determine most frequent ageRestriction
+        String mostFrequentAgeRestriction = getMostFrequent(ageRestrictions);
+
+        List<String> userPref = new ArrayList<>();
+        userPref.add(mostFrequentGenre);
+        userPref.add(mostFrequentMediaType);
+        userPref.add(mostFrequentAgeRestriction);
+
+        List<Object> recommendations = mediaRepository.getByPreference(userPref);
         JsonHelper.sendResponse(exchange, 200, recommendations);
     }
+
 
     public void searchByTitle(HttpExchange exchange) throws IOException, SQLException {
         if(authService.validateToken(exchange) == null) {return;}

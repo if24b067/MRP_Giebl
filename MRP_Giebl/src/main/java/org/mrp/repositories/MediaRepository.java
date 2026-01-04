@@ -5,8 +5,10 @@ import org.mrp.models.MediaEntry;
 import org.mrp.utils.Database;
 import org.mrp.utils.UUIDv7Generator;
 
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Types;
 import java.util.*;
 
 public class MediaRepository implements Repository{
@@ -206,30 +208,99 @@ public class MediaRepository implements Repository{
         return new ArrayList<Object>(favourites);
     }
 
-    public List<Object> getByGenre(String genre) throws SQLException {
-        List<MediaEntry> mediaEntries = new ArrayList<>();
-        genre = "%"+genre+"%";
-        ResultSet rs = db.query("SELECT * FROM MediaEntries WHERE genres LIKE ? LIMIT 5", genre);
+    public List<List<String>> getUserPreferences(UUID user_id) throws SQLException{
+        List<String> genres = new ArrayList<>();
+        List<String> mediaTypes = new ArrayList<>();
+        List<String> ageRestrictions = new ArrayList<>();
+        ResultSet rs = db.query("SELECT m.genres, m.age_restriction, m.type FROM ratings r JOIN mediaentries m ON r.media_entry = m.media_id WHERE r.creator = ? AND r.star_value >= 4;", user_id);
 
         while (rs.next()) {
+            genres.addAll(parseGenresFromDB(rs.getString("genres")));
+            mediaTypes.add(rs.getString("type"));
+            ageRestrictions.add(rs.getString("age_restriction"));
+        }
+        return List.of(genres, mediaTypes, ageRestrictions);
+    }
 
-            List<String> genres = parseGenresFromDB(rs.getString("genres"));
+    public List<Object> getByPreference(List<String> preferences) throws SQLException {
+        List<MediaEntry> mediaEntries = new ArrayList<>();
+        String genre = "%" + preferences.get(0) + "%";
+        String mediaType = preferences.get(1);
+        Integer ageRestriction = preferences.get(2) != null ? Integer.parseInt(preferences.get(2)) : null;
 
-            MediaEntry mediaEntry = new  MediaEntry(
-                    (UUID) rs.getObject("media_id"),
-                    rs.getString("title"),
-                    rs.getString("description"),
-                    (UUID) rs.getObject("creator"),
-                    rs.getInt("release_year"),
-                    rs.getInt("age_restriction"),
-                    genres,
-                    rs.getString("type"));
+        // Prepare the SQL statement
+        String query = "SELECT * FROM MediaEntries WHERE " +
+                "(genres LIKE ? OR ? IS NULL) " +
+                "AND (age_restriction = ? OR ? IS NULL) " +
+                "AND (type = ? OR ? IS NULL) " +
+                "LIMIT 5";
 
-            mediaEntries.add(mediaEntry);
+        // Create a PreparedStatement
+        try (PreparedStatement stmt = db.getConnection().prepareStatement(query)) {
+            // Set the parameters
+            stmt.setString(1, genre);
+            stmt.setString(2, genre); // For NULL check
+            if (ageRestriction != null) {
+                stmt.setInt(3, ageRestriction);
+            } else {
+                stmt.setNull(3, Types.INTEGER); // Type for age_restriction
+            }
+            stmt.setObject(4, ageRestriction, Types.INTEGER); // For NULL check
+            if (mediaType != null) {
+                stmt.setString(5, mediaType);
+            } else {
+                stmt.setNull(5, Types.VARCHAR); // Type for media type
+            }
+            stmt.setObject(6, mediaType, Types.VARCHAR); // For NULL check
+
+            ResultSet rs = stmt.executeQuery();
+
+            while (rs.next()) {
+                List<String> genres = parseGenresFromDB(rs.getString("genres"));
+
+                MediaEntry mediaEntry = new MediaEntry(
+                        (UUID) rs.getObject("media_id"),
+                        rs.getString("title"),
+                        rs.getString("description"),
+                        (UUID) rs.getObject("creator"),
+                        rs.getInt("release_year"),
+                        rs.getInt("age_restriction"),
+                        genres,
+                        rs.getString("type")
+                );
+
+                mediaEntries.add(mediaEntry);
+            }
         }
 
-        return new ArrayList<Object>(mediaEntries);
+        return new ArrayList<>(mediaEntries);
     }
+
+
+//    public List<Object> getByGenre(String genre) throws SQLException {
+//        List<MediaEntry> mediaEntries = new ArrayList<>();
+//        genre = "%"+genre+"%";
+//        ResultSet rs = db.query("SELECT * FROM MediaEntries WHERE genres LIKE ? LIMIT 5", genre);
+//
+//        while (rs.next()) {
+//
+//            List<String> genres = parseGenresFromDB(rs.getString("genres"));
+//
+//            MediaEntry mediaEntry = new  MediaEntry(
+//                    (UUID) rs.getObject("media_id"),
+//                    rs.getString("title"),
+//                    rs.getString("description"),
+//                    (UUID) rs.getObject("creator"),
+//                    rs.getInt("release_year"),
+//                    rs.getInt("age_restriction"),
+//                    genres,
+//                    rs.getString("type"));
+//
+//            mediaEntries.add(mediaEntry);
+//        }
+//
+//        return new ArrayList<Object>(mediaEntries);
+//    }
 
     public List<Object> getByTitle(String title) throws SQLException {
         List<MediaEntry> mediaEntries = new ArrayList<>();
