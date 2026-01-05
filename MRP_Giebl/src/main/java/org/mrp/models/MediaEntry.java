@@ -39,16 +39,6 @@ public class MediaEntry {
         this.type = type;
     }
 
-//    public MediaEntry(UUID id, String title, String desc, UUID creator, int releaseYear, int ageRestriction) {
-//        this.id = id;
-//        this.title = title;
-//        this.desc = desc;
-//        this.creator = creator;
-//        this.releaseYear = releaseYear;
-//        this.ageRestriction = ageRestriction;
-//        genres = null;
-//    }
-
     public UUID getId() { return id; }
     public void setId(UUID id) {}
 

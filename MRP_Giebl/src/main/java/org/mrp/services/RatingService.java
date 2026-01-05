@@ -19,6 +19,11 @@ public class RatingService {
         authService = new AuthService();
     }
 
+    public RatingService(RatingRepository ratingRepository, AuthService authService) {
+        this.ratingRepository = ratingRepository;
+        this.authService = authService;
+    }
+
     public void create(HttpExchange exchange) throws IOException, SQLException {
         UUID user_id = authService.validateToken(exchange);
         if(user_id==null){return;}

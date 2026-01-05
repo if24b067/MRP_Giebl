@@ -2,12 +2,9 @@ package org.mrp.services;
 
 import at.favre.lib.crypto.bcrypt.BCrypt;
 import com.sun.net.httpserver.HttpExchange;
-import org.mrp.models.MediaEntry;
-import org.mrp.models.Rating;
 import org.mrp.models.User;
 import org.mrp.repositories.UserRepository;
 import org.mrp.utils.JsonHelper;
-import org.mrp.utils.UUIDv7Generator;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -31,7 +28,7 @@ public class AuthService {
             return null;
         }
 
-        String token = authHeader.substring(7); // Remove "Bearer "
+        String token = authHeader.substring(7); //remove "Bearer "
 
         UUID user_id = userRepository.chkToken(token);
         if (user_id == null) {

@@ -20,6 +20,10 @@ public class MediaRepository implements Repository{
         db = new Database();
     }
 
+    public void setDb(Database db) {
+        this.db = db;
+    }
+
     private String parseGenresToDB(List<String> genresList){
         //get genre List from object, convert to csl for db storage
         StringBuilder str = new StringBuilder();
