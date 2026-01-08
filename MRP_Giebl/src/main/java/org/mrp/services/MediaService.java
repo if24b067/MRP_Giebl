@@ -15,10 +15,12 @@ import java.util.*;
 public class MediaService {
     private MediaRepository mediaRepository;
     private AuthService authService;
+    private JsonHelper jsonHelper;
 
     public MediaService() {
         mediaRepository = new MediaRepository();
         authService = new AuthService();
+        jsonHelper = new JsonHelper();
     }
 
 
@@ -29,12 +31,12 @@ public class MediaService {
         //chk if response has body
         InputStream is  = exchange.getRequestBody();
         if(is.available() == 0){
-            JsonHelper.sendError(exchange, 400, "request body is empty");
+            jsonHelper.sendError(exchange, 400, "request body is empty");
             return;
         }
 
         //get info from exchange
-        Map<String, String> request = JsonHelper.parseRequest(exchange, Map.class);
+        Map<String, String> request = jsonHelper.parseRequest(exchange, Map.class);
         String title = request.get("title");
         String desc = request.get("desc");
         String type = request.get("type");
@@ -45,7 +47,7 @@ public class MediaService {
             try {
                 releaseYear = Integer.parseInt(releaseYearStr);
             } catch (NumberFormatException e) {
-                JsonHelper.sendError(exchange, 400, "correct input required");
+                jsonHelper.sendError(exchange, 400, "correct input required");
                 return;
             }
         }
@@ -56,7 +58,7 @@ public class MediaService {
             try {
                 ageRestriction = Integer.parseInt(ageRestrictionStr);
             } catch (NumberFormatException e) {
-                JsonHelper.sendError(exchange, 400, "correct input required");
+                jsonHelper.sendError(exchange, 400, "correct input required");
                 return;
             }
         }
@@ -66,7 +68,7 @@ public class MediaService {
         if (genresStr != null && !genresStr.trim().isEmpty()) {
             genres = Arrays.asList(genresStr.split(","));
         } else {
-            JsonHelper.sendError(exchange, 400, "correct input required");
+            jsonHelper.sendError(exchange, 400, "correct input required");
             return;
         }
 
@@ -78,12 +80,12 @@ public class MediaService {
                 desc == null || desc.trim().isEmpty() ||
                 type == null || type.trim().isEmpty() ||
                 (!type.equals("MOVIE") && !type.equals("SERIES") && !type.equals("GAME"))) {
-            JsonHelper.sendError(exchange, 400, "Correct input required");
+            jsonHelper.sendError(exchange, 400, "Correct input required");
             return;
         }
 
         if (title.length() > 30 || desc.length() > 100 || genres.size() > 10) {
-            JsonHelper.sendError(exchange, 400, "input too long");
+            jsonHelper.sendError(exchange, 400, "input too long");
             return;
         }
 
@@ -94,7 +96,7 @@ public class MediaService {
         UUID mediaId = mediaRepository.save(mediaEntry);
         MediaEntry entry = (MediaEntry) mediaRepository.getOne(mediaId);
 
-        JsonHelper.sendResponse(exchange, 201, entry);
+        jsonHelper.sendResponse(exchange, 201, entry);
     }
 
     public void read(HttpExchange exchange) throws IOException, SQLException {
@@ -109,16 +111,16 @@ public class MediaService {
             MediaEntry mediaEntry = (MediaEntry) mediaRepository.getOne(media_id);
 
             if(mediaEntry == null){
-                JsonHelper.sendError(exchange, 404, "Media not found");
+                jsonHelper.sendError(exchange, 404, "Media not found");
                 return;
             }
 
-            JsonHelper.sendResponse(exchange, 200, mediaEntry);
+            jsonHelper.sendResponse(exchange, 200, mediaEntry);
 
         } catch (IllegalArgumentException exception){
             List<Object> response = mediaRepository.getAll();
 
-            JsonHelper.sendResponse(exchange, 200, response);
+            jsonHelper.sendResponse(exchange, 200, response);
         }
     }
 
@@ -129,19 +131,19 @@ public class MediaService {
         //chk if response has body
         InputStream is  = exchange.getRequestBody();
         if(is.available() == 0){
-            JsonHelper.sendError(exchange, 400, "request body is empty");
+            jsonHelper.sendError(exchange, 400, "request body is empty");
             return;
         }
 
         //get info from exchange
-        Map<String, String> request = JsonHelper.parseRequest(exchange, Map.class);
+        Map<String, String> request = jsonHelper.parseRequest(exchange, Map.class);
         UUID media_id = UUID.fromString(request.get("media_id"));
 
         //chk whether User is creator
         boolean isCreator = mediaRepository.chkCreator(media_id, user_id);
 
         if(!isCreator){
-            JsonHelper.sendError(exchange, 401, "unauthorized to edit post");
+            jsonHelper.sendError(exchange, 401, "unauthorized to edit post");
             return;
         }
 
@@ -156,7 +158,7 @@ public class MediaService {
             try {
                 releaseYear = Integer.parseInt(releaseYearStr);
             } catch (NumberFormatException e) {
-                JsonHelper.sendError(exchange, 400, "correct input required");
+                jsonHelper.sendError(exchange, 400, "correct input required");
                 return;
             }
         }
@@ -167,7 +169,7 @@ public class MediaService {
             try {
                 ageRestriction = Integer.parseInt(ageRestrictionStr);
             } catch (NumberFormatException e) {
-                JsonHelper.sendError(exchange, 400, "correct input required");
+                jsonHelper.sendError(exchange, 400, "correct input required");
                 return;
             }
         }
@@ -177,7 +179,7 @@ public class MediaService {
         if (genresStr != null && !genresStr.trim().isEmpty()) {
             genres = Arrays.asList(genresStr.split(","));
         } else {
-            JsonHelper.sendError(exchange, 400, "correct input required");
+            jsonHelper.sendError(exchange, 400, "correct input required");
             return;
         }
 
@@ -185,11 +187,11 @@ public class MediaService {
                 desc == null || desc.trim().isEmpty() ||
                 type == null || type.trim().isEmpty() ||
                 (!type.equals("MOVIE") && !type.equals("SERIES") && !type.equals("GAME"))) {
-            JsonHelper.sendError(exchange, 400, "Correct input required");
+            jsonHelper.sendError(exchange, 400, "Correct input required");
             return;
         }
         if (title.length() > 30 || desc.length() > 100 || genres.size() > 10) {
-            JsonHelper.sendError(exchange, 400, "input too long");
+            jsonHelper.sendError(exchange, 400, "input too long");
             return;
         }
 
@@ -198,7 +200,7 @@ public class MediaService {
         //call repo function
         mediaRepository.update(mediaEntry);
 
-        JsonHelper.sendResponse(exchange, 201, mediaEntry);
+        jsonHelper.sendResponse(exchange, 201, mediaEntry);
     }
 
     public void delete(HttpExchange exchange) throws IOException, SQLException {
@@ -212,7 +214,7 @@ public class MediaService {
         try{
             media_id = UUID.fromString(tmpValues[tmpValues.length-1]);
         } catch (IllegalArgumentException exception){
-            JsonHelper.sendError(exchange, 400, "media Id required");
+            jsonHelper.sendError(exchange, 400, "media Id required");
             return;
         }
 
@@ -220,7 +222,7 @@ public class MediaService {
         MediaEntry mediaEntry = (MediaEntry) mediaRepository.getOne(media_id);
 
         if(mediaEntry == null) {
-            JsonHelper.sendError(exchange, 404, "Media entry not found");
+            jsonHelper.sendError(exchange, 404, "Media entry not found");
             return;
         }
 
@@ -228,12 +230,12 @@ public class MediaService {
         boolean isCreator = mediaRepository.chkCreator(media_id, user_id);
 
         if(!isCreator){
-            JsonHelper.sendError(exchange, 401, "unauthorized to delete post");
+            jsonHelper.sendError(exchange, 401, "unauthorized to delete post");
             return;
         }
 
         mediaRepository.delete(media_id);
-        JsonHelper.sendResponse(exchange, 200, mediaEntry);
+        jsonHelper.sendResponse(exchange, 200, mediaEntry);
     }
 
     public void getAvgRating(HttpExchange exchange) throws IOException, SQLException {
@@ -256,11 +258,11 @@ public class MediaService {
             }
             float score = sum/response.size();
             //TODO: correct Json response
-            String avgScore = JsonHelper.toJson(score);
-            JsonHelper.sendResponse(exchange, 200, avgScore);
+            String avgScore = jsonHelper.toJson(score);
+            jsonHelper.sendResponse(exchange, 200, avgScore);
 
         } catch (IllegalArgumentException exception){
-            JsonHelper.sendError(exchange, 404, "Media not found");
+            jsonHelper.sendError(exchange, 404, "Media not found");
         }
     }
 
@@ -282,10 +284,10 @@ public class MediaService {
                 }
             }
 
-            JsonHelper.sendResponse(exchange, 200, ratings);
+            jsonHelper.sendResponse(exchange, 200, ratings);
 
         } catch (IllegalArgumentException exception){
-            JsonHelper.sendError(exchange, 404, "Media not found");
+            jsonHelper.sendError(exchange, 404, "Media not found");
         }
     }
 
@@ -296,12 +298,12 @@ public class MediaService {
         //chk if response has body
         InputStream is  = exchange.getRequestBody();
         if(is.available() == 0){
-            JsonHelper.sendError(exchange, 400, "request body is empty");
+            jsonHelper.sendError(exchange, 400, "request body is empty");
             return;
         }
 
         //get info from exchange
-        Map<String, String> request = JsonHelper.parseRequest(exchange, Map.class);
+        Map<String, String> request = jsonHelper.parseRequest(exchange, Map.class);
 
         UUID media_id = null;
         String id = request.get("media_id");
@@ -309,18 +311,18 @@ public class MediaService {
             try{
                 media_id = UUID.fromString(id);
             }catch (IllegalArgumentException e){
-                JsonHelper.sendError(exchange, 400, "correct input required");
+                jsonHelper.sendError(exchange, 400, "correct input required");
                 return;
             }
         }
 
         if(!mediaRepository.chkEntry(media_id)) {
-            JsonHelper.sendError(exchange, 404, "media entry not found");
+            jsonHelper.sendError(exchange, 404, "media entry not found");
             return;
         }
 
         if(mediaRepository.chkFav(media_id, user_id)) {
-            JsonHelper.sendError(exchange, 404, "entry already favourited");
+            jsonHelper.sendError(exchange, 404, "entry already favourited");
             return;
         }
 
@@ -328,7 +330,7 @@ public class MediaService {
         mediaRepository.saveFav(user_id, media_id);
         List<Object> favourites = mediaRepository.getFav(user_id);
 
-        JsonHelper.sendResponse(exchange, 201, favourites);
+        jsonHelper.sendResponse(exchange, 201, favourites);
     }
 
     public void remFavourite(HttpExchange exchange) throws IOException, SQLException {
@@ -341,17 +343,17 @@ public class MediaService {
         try{
             UUID media_id = UUID.fromString(tmpValues[tmpValues.length-1]);
             if(!mediaRepository.chkFav(media_id, user_id)) {
-                JsonHelper.sendError(exchange, 404, "media entry not found");
+                jsonHelper.sendError(exchange, 404, "media entry not found");
                 return;
             }
 
             mediaRepository.delFav(user_id, media_id);
             List<Object> favourites = mediaRepository.getFav(user_id);
 
-            JsonHelper.sendResponse(exchange, 200, favourites);
+            jsonHelper.sendResponse(exchange, 200, favourites);
 
         } catch (IllegalArgumentException exception){
-            JsonHelper.sendError(exchange, 404, "correct input required");
+            jsonHelper.sendError(exchange, 404, "correct input required");
         }
     }
 
@@ -361,7 +363,7 @@ public class MediaService {
 
         List<Object> favourites = mediaRepository.getFav(user_id);
 
-        JsonHelper.sendResponse(exchange, 200, favourites);
+        jsonHelper.sendResponse(exchange, 200, favourites);
 
     }
 
@@ -429,7 +431,7 @@ public class MediaService {
         List<String> ageRestrictions = preferences.get(2);
 
         if(mediaTypes.isEmpty() || genres.isEmpty() || ageRestrictions.isEmpty()){
-            JsonHelper.sendResponse(exchange, 200, genres);
+            jsonHelper.sendResponse(exchange, 200, genres);
             return;
         }
 
@@ -448,7 +450,7 @@ public class MediaService {
         userPref.add(mostFrequentAgeRestriction);
 
         List<Object> recommendations = mediaRepository.getByPreference(userPref);
-        JsonHelper.sendResponse(exchange, 200, recommendations);
+        jsonHelper.sendResponse(exchange, 200, recommendations);
     }
 
 
@@ -462,11 +464,11 @@ public class MediaService {
         List<Object> mediaEntries = mediaRepository.getByTitle(title);
 
         if(mediaEntries.isEmpty()){
-            JsonHelper.sendResponse(exchange, 404, mediaEntries);
+            jsonHelper.sendResponse(exchange, 404, mediaEntries);
             return;
         }
 
-        JsonHelper.sendResponse(exchange, 200, mediaEntries);
+        jsonHelper.sendResponse(exchange, 200, mediaEntries);
     }
 
     public void sort(HttpExchange exchange, char TitleOrYear) throws IOException, SQLException {
@@ -479,11 +481,11 @@ public class MediaService {
         List<Object> mediaEntries = mediaRepository.sorted(TitleOrYear);
 
         if(mediaEntries.isEmpty()){
-            JsonHelper.sendResponse(exchange, 404, mediaEntries);
+            jsonHelper.sendResponse(exchange, 404, mediaEntries);
             return;
         }
 
-        JsonHelper.sendResponse(exchange, 200, mediaEntries);
+        jsonHelper.sendResponse(exchange, 200, mediaEntries);
     }
 
 //    public void sortByYear(HttpExchange exchange) throws IOException, SQLException {

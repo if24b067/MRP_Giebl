@@ -11,9 +11,11 @@ import java.sql.SQLException;
 
 public class AuthHandler implements HttpHandler {
     private AuthService authService;
+    private JsonHelper jsonHelper;
 
     public AuthHandler() {
-        this.authService = new AuthService();
+        jsonHelper = new JsonHelper();
+        authService = new AuthService();
     }
 
     public AuthHandler(AuthService authService) {
@@ -37,17 +39,17 @@ public class AuthHandler implements HttpHandler {
             } else if ("DELETE".equals(method)) {
                 authService.delete(exchange);
             } else {
-                JsonHelper.sendError(exchange, 404, "Endpoint not found");
+                jsonHelper.sendError(exchange, 404, "Endpoint not found");
             }
         } catch (SQLException e) {
             e.printStackTrace();
-            JsonHelper.sendError(exchange, 500, "error in Database");
+            jsonHelper.sendError(exchange, 500, "error in Database");
         } catch (IOException e) {
             e.printStackTrace();
-            JsonHelper.sendError(exchange, 400, "unexpected input");
+            jsonHelper.sendError(exchange, 400, "unexpected input");
         } catch (Exception e) {
             e.printStackTrace();
-            JsonHelper.sendError(exchange, 500, "Internal server error");
+            jsonHelper.sendError(exchange, 500, "Internal server error");
         }
     }
 

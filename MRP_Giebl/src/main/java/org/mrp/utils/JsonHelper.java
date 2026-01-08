@@ -13,25 +13,29 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class JsonHelper {
-    private static final ObjectMapper mapper = new ObjectMapper();
+    private ObjectMapper mapper;
 
-    static {
+    public JsonHelper() {
+        mapper = new ObjectMapper();
         mapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
     }
+//    static {
+//        mapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
+//    }
 
     // Parse JSON from request body
-    public static <T> T parseRequest(HttpExchange exchange, Class<T> clazz) throws IOException {
+    public <T> T parseRequest(HttpExchange exchange, Class<T> clazz) throws IOException {
         InputStream is = exchange.getRequestBody();
         return mapper.readValue(is, clazz);
     }
 
     // Parse JSON from string
-    public static <T> T parseJson(String json, Class<T> clazz) throws IOException {
+    public <T> T parseJson(String json, Class<T> clazz) throws IOException {
         return mapper.readValue(json, clazz);
     }
 
     // Convert object to JSON string
-    public static String toJson(Object object) {
+    public String toJson(Object object) {
         try {
             return mapper.writeValueAsString(object);
         } catch (Exception e) {
@@ -41,7 +45,7 @@ public class JsonHelper {
     }
 
     // Send JSON response
-    public static void sendResponse(HttpExchange exchange, int statusCode, Object response) throws IOException {
+    public void sendResponse(HttpExchange exchange, int statusCode, Object response) throws IOException {
         String jsonResponse = toJson(response);
         byte[] responseBytes = jsonResponse.getBytes(StandardCharsets.UTF_8);
 
@@ -54,21 +58,21 @@ public class JsonHelper {
     }
 
     // Send error response
-    public static void sendError(HttpExchange exchange, int statusCode, String message) throws IOException {
+    public void sendError(HttpExchange exchange, int statusCode, String message) throws IOException {
         Map<String, String> error = new HashMap<>();
         error.put("error", message);
         sendResponse(exchange, statusCode, error);
     }
 
     // Send success response with message
-    public static void sendSuccess(HttpExchange exchange, String message) throws IOException {
+    public void sendSuccess(HttpExchange exchange, String message) throws IOException {
         Map<String, String> success = new HashMap<>();
         success.put("message", message);
         sendResponse(exchange, 200, success);
     }
 
     // Parse query parameters from URL
-    public static Map<String, String> parseQueryParams(String query) {
+    public Map<String, String> parseQueryParams(String query) {
         Map<String, String> params = new HashMap<>();
         if (query != null && !query.isEmpty()) {
             String[] pairs = query.split("&");
@@ -85,7 +89,7 @@ public class JsonHelper {
     }
 
     // Get path segments from URI
-    public static String[] getPathSegments(String path) {
+    public String[] getPathSegments(String path) {
         if (path.startsWith("/")) {
             path = path.substring(1);
         }

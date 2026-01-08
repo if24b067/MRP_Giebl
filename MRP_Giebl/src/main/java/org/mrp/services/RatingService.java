@@ -13,15 +13,18 @@ import java.util.*;
 public class RatingService {
     private RatingRepository ratingRepository;
     private AuthService authService;
+    private JsonHelper jsonHelper;
 
     public RatingService() {
         ratingRepository = new RatingRepository();
         authService = new AuthService();
+        jsonHelper = new JsonHelper();
     }
 
-    public RatingService(RatingRepository ratingRepository, AuthService authService) {
+    public RatingService(RatingRepository ratingRepository, AuthService authService, JsonHelper jsonHelper) {
         this.ratingRepository = ratingRepository;
         this.authService = authService;
+        this.jsonHelper = jsonHelper;
     }
 
     public void create(HttpExchange exchange) throws IOException, SQLException {
@@ -30,12 +33,12 @@ public class RatingService {
 
         InputStream is  = exchange.getRequestBody();
         if(is.available() == 0){
-            JsonHelper.sendError(exchange, 400, "request body is empty");
+            jsonHelper.sendError(exchange, 400, "request body is empty");
             return;
         }
 
         //get info from exchange
-        Map<String, String> request = JsonHelper.parseRequest(exchange, Map.class);
+        Map<String, String> request = jsonHelper.parseRequest(exchange, Map.class);
 
         UUID mediaId = null;
         String media = request.get("mediaId");
@@ -43,7 +46,7 @@ public class RatingService {
             try{
                 mediaId = UUID.fromString(media);
             }catch (IllegalArgumentException e){
-                JsonHelper.sendError(exchange, 400, "correct input required");
+                jsonHelper.sendError(exchange, 400, "correct input required");
                 return;
             }
         }
@@ -52,7 +55,7 @@ public class RatingService {
 
         //chk whether user has already rated entry
         if (ratingRepository.chkUserAndMedia(creator, mediaId)) {
-            JsonHelper.sendError(exchange, 400, "already rated this media entry");
+            jsonHelper.sendError(exchange, 400, "already rated this media entry");
             return;
         }
 
@@ -62,7 +65,7 @@ public class RatingService {
             try {
                 starValue = Integer.parseInt(value);
             } catch (NumberFormatException e) {
-                JsonHelper.sendError(exchange, 400, "correct input required");
+                jsonHelper.sendError(exchange, 400, "correct input required");
                 return;
             }
         }
@@ -75,14 +78,14 @@ public class RatingService {
             if(vis.equalsIgnoreCase("true")) visFlag = true;
             else if(vis.equalsIgnoreCase("false")) visFlag = false;
             else {
-                JsonHelper.sendError(exchange, 400, "correct input required");
+                jsonHelper.sendError(exchange, 400, "correct input required");
                 return;
             }
         }
 
         if(comment != null) {
             if (comment.length() > 100) {
-                JsonHelper.sendError(exchange, 400, "input too long");
+                jsonHelper.sendError(exchange, 400, "input too long");
                 return;
             }
         }
@@ -93,7 +96,7 @@ public class RatingService {
         UUID ratingId = ratingRepository.save(rating);
         Rating r = (Rating) ratingRepository.getOne(ratingId);
 
-        JsonHelper.sendResponse(exchange, 201, r);
+        jsonHelper.sendResponse(exchange, 201, r);
     }
 
     public void read(HttpExchange exchange) throws IOException, SQLException {
@@ -108,17 +111,17 @@ public class RatingService {
             Rating rating = (Rating) ratingRepository.getOne(rating_id);
 
             if(rating == null){
-                JsonHelper.sendError(exchange, 404, "Media not found");
+                jsonHelper.sendError(exchange, 404, "Media not found");
                 return;
             }
 
             if(!rating.getVis()) rating.setComment(null);
-            JsonHelper.sendResponse(exchange, 200, rating);
+            jsonHelper.sendResponse(exchange, 200, rating);
 
         } catch (IllegalArgumentException exception){
             if(Objects.equals(tmpValues[tmpValues.length - 1], "own")){
                 List<Object> ratings = ratingRepository.getOwn(user_id);
-                JsonHelper.sendResponse(exchange, 200, ratings);
+                jsonHelper.sendResponse(exchange, 200, ratings);
                 return;
             }
             List<Object> ratings = ratingRepository.getAll();
@@ -129,7 +132,7 @@ public class RatingService {
                 }
             }
 
-            JsonHelper.sendResponse(exchange, 200, ratings);
+            jsonHelper.sendResponse(exchange, 200, ratings);
         }
     }
 
@@ -139,11 +142,11 @@ public class RatingService {
 
         InputStream is  = exchange.getRequestBody();
         if(is.available() == 0){
-            JsonHelper.sendError(exchange, 400, "request body is empty");
+            jsonHelper.sendError(exchange, 400, "request body is empty");
             return;
         }
 
-        Map<String, String> request = JsonHelper.parseRequest(exchange, Map.class);
+        Map<String, String> request = jsonHelper.parseRequest(exchange, Map.class);
 
         UUID ratingId = null;
         String id = request.get("rating_id");
@@ -151,11 +154,11 @@ public class RatingService {
             try{
                 ratingId = UUID.fromString(id);
             }catch (IllegalArgumentException e){
-                JsonHelper.sendError(exchange, 400, "correct input required");
+                jsonHelper.sendError(exchange, 400, "correct input required");
                 return;
             }
         } else {
-            JsonHelper.sendError(exchange, 400, "correct input required");
+            jsonHelper.sendError(exchange, 400, "correct input required");
             return;
         }
 
@@ -163,7 +166,7 @@ public class RatingService {
         boolean isCreator = ratingRepository.chkCreator(ratingId, user_id);
 
         if(!isCreator){
-            JsonHelper.sendError(exchange, 401, "unauthorized to edit post");
+            jsonHelper.sendError(exchange, 401, "unauthorized to edit post");
             return;
         }
 
@@ -174,7 +177,7 @@ public class RatingService {
             try {
                 starValue = Integer.parseInt(value);
             } catch (NumberFormatException e) {
-                JsonHelper.sendError(exchange, 400, "correct input required");
+                jsonHelper.sendError(exchange, 400, "correct input required");
                 return;
             }
         }
@@ -187,7 +190,7 @@ public class RatingService {
             if(vis.equalsIgnoreCase("true")) visFlag = true;
             else if(vis.equalsIgnoreCase("false")) visFlag = false;
             else {
-                JsonHelper.sendError(exchange, 400, "correct input required");
+                jsonHelper.sendError(exchange, 400, "correct input required");
                 return;
             }
         }
@@ -197,12 +200,12 @@ public class RatingService {
         //validate input
         if (comment == null || comment.trim().isEmpty() ||
             starValue == null || /*likes == null ||*/ visFlag == null) {
-            JsonHelper.sendError(exchange, 400, "Correct input required");
+            jsonHelper.sendError(exchange, 400, "Correct input required");
             return;
         }
 
         if (comment.length() > 100) {
-            JsonHelper.sendError(exchange, 400, "input too long");
+            jsonHelper.sendError(exchange, 400, "input too long");
             return;
         }
 
@@ -213,7 +216,7 @@ public class RatingService {
         ratingRepository.update(rating);
         Rating r = (Rating) ratingRepository.getOne(ratingId);
 
-        JsonHelper.sendResponse(exchange, 200, r);
+        jsonHelper.sendResponse(exchange, 200, r);
     }
 
     public void delete(HttpExchange exchange) throws IOException, SQLException {
@@ -227,7 +230,7 @@ public class RatingService {
         try{
             rating_id = UUID.fromString(tmpValues[tmpValues.length-1]);
         } catch (IllegalArgumentException exception){
-            JsonHelper.sendError(exchange, 400, "rating Id required");
+            jsonHelper.sendError(exchange, 400, "rating Id required");
             return;
         }
 
@@ -235,7 +238,7 @@ public class RatingService {
         Rating rating = (Rating) ratingRepository.getOne(rating_id);
 
         if(rating == null) {
-            JsonHelper.sendError(exchange, 404, "Rating not found");
+            jsonHelper.sendError(exchange, 404, "Rating not found");
             return;
         }
 
@@ -243,12 +246,12 @@ public class RatingService {
         boolean isCreator = ratingRepository.chkCreator(rating_id, user_id);
 
         if(!isCreator){
-            JsonHelper.sendError(exchange, 401, "unauthorized to delete post");
+            jsonHelper.sendError(exchange, 401, "unauthorized to delete post");
             return;
         }
 
         ratingRepository.delete(rating_id);
-        JsonHelper.sendResponse(exchange, 200, rating);
+        jsonHelper.sendResponse(exchange, 200, rating);
     }
 
     public void like (HttpExchange exchange) throws IOException, SQLException {
@@ -257,12 +260,12 @@ public class RatingService {
 
         InputStream is  = exchange.getRequestBody();
         if(is.available() == 0){
-            JsonHelper.sendError(exchange, 400, "request body is empty");
+            jsonHelper.sendError(exchange, 400, "request body is empty");
             return;
         }
 
         //get info from exchange
-        Map<String, String> request = JsonHelper.parseRequest(exchange, Map.class);
+        Map<String, String> request = jsonHelper.parseRequest(exchange, Map.class);
 
         UUID rating_id = null;
         String rating = request.get("rating_id");
@@ -270,14 +273,14 @@ public class RatingService {
             try{
                 rating_id = UUID.fromString(rating);
             }catch (IllegalArgumentException e){
-                JsonHelper.sendError(exchange, 400, "correct input required");
+                jsonHelper.sendError(exchange, 400, "correct input required");
                 return;
             }
         }
 
         //chk whether user has already liked rating
         if (ratingRepository.chkUserAndRating(user_id, rating_id)) {
-            JsonHelper.sendError(exchange, 400, "already liked this rating");
+            jsonHelper.sendError(exchange, 400, "already liked this rating");
             return;
         }
 
@@ -286,7 +289,7 @@ public class RatingService {
         int likes = ratingRepository.getCntOfLikes(rating_id);
 
         //TODO correct JSON response
-        JsonHelper.sendResponse(exchange, 201, likes);
+        jsonHelper.sendResponse(exchange, 201, likes);
     }
 
     public void cntLikes(HttpExchange exchange) throws IOException, SQLException{
@@ -300,10 +303,10 @@ public class RatingService {
             int likesCnt = ratingRepository.getCntOfLikes(rating_id);
 
             //TODO correct JSON response
-            JsonHelper.sendResponse(exchange, 200, likesCnt);
+            jsonHelper.sendResponse(exchange, 200, likesCnt);
 
         } catch (IllegalArgumentException exception){
-            JsonHelper.sendError(exchange, 400, "invalid input");
+            jsonHelper.sendError(exchange, 400, "invalid input");
         }
     }
 }

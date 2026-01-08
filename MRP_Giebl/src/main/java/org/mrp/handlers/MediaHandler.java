@@ -10,9 +10,11 @@ import java.sql.SQLException;
 
 public class MediaHandler implements HttpHandler {
     private MediaService mediaService;
+    private JsonHelper jsonHelper;
 
     public MediaHandler() {
-        this.mediaService = new MediaService();
+        jsonHelper = new JsonHelper();
+        mediaService = new MediaService();
     }
 
     @Override
@@ -50,17 +52,17 @@ public class MediaHandler implements HttpHandler {
             } else if ("DELETE".equals(method)) {
                 mediaService.delete(exchange);
             } else {
-                JsonHelper.sendError(exchange, 404, "Endpoint not found");
+                jsonHelper.sendError(exchange, 404, "Endpoint not found");
             }
         } catch (SQLException e) {
             e.printStackTrace();
-            JsonHelper.sendError(exchange, 500, "error in Database");
+            jsonHelper.sendError(exchange, 500, "error in Database");
         } catch (IOException e) {
             e.printStackTrace();
-            JsonHelper.sendError(exchange, 400, "unexpected input");
+            jsonHelper.sendError(exchange, 400, "unexpected input");
         } catch (Exception e) {
             e.printStackTrace();
-            JsonHelper.sendError(exchange, 500, "Internal server error");
+            jsonHelper.sendError(exchange, 500, "Internal server error");
         }
     }
 }

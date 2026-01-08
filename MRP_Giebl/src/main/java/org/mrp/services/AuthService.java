@@ -15,8 +15,10 @@ import java.util.*;
 
 public class AuthService {
     private UserRepository userRepository;
+    private JsonHelper jsonHelper;
 
     public AuthService() {
+        jsonHelper = new JsonHelper();
         userRepository = new UserRepository();
     }
 
@@ -32,7 +34,7 @@ public class AuthService {
 
         UUID user_id = userRepository.chkToken(token);
         if (user_id == null) {
-            JsonHelper.sendError(exchange, 401, "invalid token");
+            jsonHelper.sendError(exchange, 401, "invalid token");
             return null;
         }
 
@@ -40,29 +42,29 @@ public class AuthService {
     }
 
     public void register (HttpExchange exchange) throws IOException, SQLException {
-        Map<String, String> request = JsonHelper.parseRequest(exchange, HashMap.class);
+        Map<String, String> request = jsonHelper.parseRequest(exchange, HashMap.class);
         String username = request.get("username");
         String password = request.get("password");
 
         //validate input
         if(userRepository.chkUsername(username)) {
-            JsonHelper.sendError(exchange, 400, "Username already exists");
+            jsonHelper.sendError(exchange, 400, "Username already exists");
             return;
         }
 
         if (username == null || username.trim().isEmpty() ||
                 password == null || password.trim().isEmpty()) {
-            JsonHelper.sendError(exchange, 400, "Username and password are required");
+            jsonHelper.sendError(exchange, 400, "Username and password are required");
             return;
         }
 
         if (username.length() < 3 || username.length() > 50) {
-            JsonHelper.sendError(exchange, 400, "Username must be between 3 and 50 characters");
+            jsonHelper.sendError(exchange, 400, "Username must be between 3 and 50 characters");
             return;
         }
 
         if (password.length() < 6) {
-            JsonHelper.sendError(exchange, 400, "Password must be at least 6 characters");
+            jsonHelper.sendError(exchange, 400, "Password must be at least 6 characters");
             return;
         }
 
@@ -79,11 +81,11 @@ public class AuthService {
         Map<String, Object> response = new HashMap<>();
         response.put("id", userId);
         response.put("username", username);
-        JsonHelper.sendResponse(exchange, 201, response);
+        jsonHelper.sendResponse(exchange, 201, response);
     }
 
     public void login (HttpExchange exchange) throws IOException, SQLException {
-        Map<String, String> request = JsonHelper.parseRequest(exchange, HashMap.class);
+        Map<String, String> request = jsonHelper.parseRequest(exchange, HashMap.class);
         String username = request.get("username");
         String password = request.get("password");
 
@@ -91,12 +93,12 @@ public class AuthService {
         //validate input
         if (username == null || username.trim().isEmpty() ||
                 password == null || password.trim().isEmpty()) {
-            JsonHelper.sendError(exchange, 400, "Username and password are required");
+            jsonHelper.sendError(exchange, 400, "Username and password are required");
             return;
         }
 
         if(!userRepository.chkLogin(username, password)) {
-            JsonHelper.sendError(exchange, 400, "Username or password are invalid");
+            jsonHelper.sendError(exchange, 400, "Username or password are invalid");
             return;
         }
 
@@ -108,7 +110,7 @@ public class AuthService {
         Map<String, Object> response = new HashMap<>();
         response.put("token", token);
 
-        JsonHelper.sendResponse(exchange, 200, response);
+        jsonHelper.sendResponse(exchange, 200, response);
     }
 
     public void read(HttpExchange exchange) throws IOException, SQLException {
@@ -117,7 +119,7 @@ public class AuthService {
 
         User user = (User) userRepository.getOne(user_id);
 
-        JsonHelper.sendResponse(exchange, 200, user);
+        jsonHelper.sendResponse(exchange, 200, user);
     }
 
     public void update(HttpExchange exchange) throws IOException, SQLException {
@@ -126,11 +128,11 @@ public class AuthService {
 
         InputStream is  = exchange.getRequestBody();
         if(is.available() == 0){
-            JsonHelper.sendError(exchange, 400, "request body is empty");
+            jsonHelper.sendError(exchange, 400, "request body is empty");
             return;
         }
 
-        Map<String, String> request = JsonHelper.parseRequest(exchange, Map.class);
+        Map<String, String> request = jsonHelper.parseRequest(exchange, Map.class);
         String passwordOld = request.get("password_old");
         String username = request.get("username");
         String passwordNew = request.get("password_new");
@@ -138,7 +140,7 @@ public class AuthService {
         if(username == null || username.trim().isEmpty() ||
         passwordNew == null || passwordNew.trim().isEmpty() ||
         passwordOld == null || passwordOld.trim().isEmpty()){
-            JsonHelper.sendError(exchange, 400, "valid input required");
+            jsonHelper.sendError(exchange, 400, "valid input required");
             return;
         }
 
@@ -146,7 +148,7 @@ public class AuthService {
         boolean correctPW = userRepository.chkPW(passwordOld, user_id);
 
         if(!correctPW){
-            JsonHelper.sendError(exchange, 401, "unauthorized to edit user");
+            jsonHelper.sendError(exchange, 401, "unauthorized to edit user");
             return;
         }
 
@@ -159,7 +161,7 @@ public class AuthService {
         Map<String, Object> response = new HashMap<>();
         response.put("username", username);
 
-        JsonHelper.sendResponse(exchange, 201, response);
+        jsonHelper.sendResponse(exchange, 201, response);
     }
 
     public void delete(HttpExchange exchange) throws IOException, SQLException {
@@ -168,6 +170,6 @@ public class AuthService {
 
         User user = (User) userRepository.getOne(user_id);
         userRepository.delete(user_id);
-        JsonHelper.sendResponse(exchange, 200, user);
+        jsonHelper.sendResponse(exchange, 200, user);
     }
 }
