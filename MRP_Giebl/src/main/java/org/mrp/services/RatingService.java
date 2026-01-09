@@ -276,6 +276,9 @@ public class RatingService {
                 jsonHelper.sendError(exchange, 400, "correct input required");
                 return;
             }
+        } else {
+            jsonHelper.sendError(exchange, 400, "correct input required");
+            return;
         }
 
         //chk whether user has already liked rating

@@ -19,9 +19,6 @@ public class JsonHelper {
         mapper = new ObjectMapper();
         mapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
     }
-//    static {
-//        mapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
-//    }
 
     // Parse JSON from request body
     public <T> T parseRequest(HttpExchange exchange, Class<T> clazz) throws IOException {
