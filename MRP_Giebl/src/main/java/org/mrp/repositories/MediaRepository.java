@@ -282,10 +282,5 @@ public class MediaRepository implements Repository{
         else return new ArrayList<>();
         //return new ArrayList<Object>(mediaEntries);
     }
-
-    public List<Object> sortedByScore() throws SQLException {
-        List<MediaEntry> mediaEntries = new ArrayList<>();
-        return new ArrayList<Object>(mediaEntries);
-    }
 }
 

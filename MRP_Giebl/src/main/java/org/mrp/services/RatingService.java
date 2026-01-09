@@ -4,7 +4,6 @@ import com.sun.net.httpserver.HttpExchange;
 import org.mrp.models.LeaderBoard;
 import org.mrp.models.NumValue;
 import org.mrp.models.Rating;
-import org.mrp.models.User;
 import org.mrp.repositories.RatingRepository;
 import org.mrp.utils.JsonHelper;
 
@@ -31,9 +30,10 @@ public class RatingService {
     }
 
     public void create(HttpExchange exchange) throws IOException, SQLException {
-        UUID user_id = authService.validateToken(exchange);
+        UUID user_id = authService.validateToken(exchange); //chk token validity and get user id
         if(user_id==null){return;}
 
+        //chk whether request body is empty
         InputStream is  = exchange.getRequestBody();
         if(is.available() == 0){
             jsonHelper.sendError(exchange, 400, "request body is empty");
@@ -43,6 +43,7 @@ public class RatingService {
         //get info from exchange
         Map<String, String> request = jsonHelper.parseRequest(exchange, Map.class);
 
+        //get media id and parse to UUID, chk for null
         UUID mediaId = null;
         String media = request.get("mediaId");
         if (media != null) {
@@ -52,6 +53,8 @@ public class RatingService {
                 jsonHelper.sendError(exchange, 400, "correct input required");
                 return;
             }
+        } else {
+            jsonHelper.sendError(exchange, 400, "correct input required");
         }
 
         UUID creator = user_id;
@@ -62,6 +65,8 @@ public class RatingService {
             return;
         }
 
+        /*get rest of info if not already rated*/
+        //get starValue and parse to int, chk for null
         Integer starValue = null;
         String value = request.get("starValue");
         if (value != null) {
@@ -71,10 +76,11 @@ public class RatingService {
                 jsonHelper.sendError(exchange, 400, "correct input required");
                 return;
             }
+        } else {
+            jsonHelper.sendError(exchange, 400, "correct input required");
         }
 
-        String comment = request.get("comment");
-
+        //get visibility flag for comment and parse to bool, chk for null
         Boolean visFlag = null;
         String vis = request.get("visFlag");
         if (vis != null) {
@@ -84,14 +90,17 @@ public class RatingService {
                 jsonHelper.sendError(exchange, 400, "correct input required");
                 return;
             }
+        } else {
+            jsonHelper.sendError(exchange, 400, "correct input required");
         }
 
+        String comment = request.get("comment");
         if(comment != null) {
             if (comment.length() > 100) {
                 jsonHelper.sendError(exchange, 400, "input too long");
                 return;
             }
-        }
+        }   //comment is optional, possible to be null
 
         Rating rating = new Rating(creator, mediaId, starValue, comment, /*likes,*/ visFlag);
 
@@ -103,14 +112,14 @@ public class RatingService {
     }
 
     public void read(HttpExchange exchange) throws IOException, SQLException {
-        UUID user_id = authService.validateToken(exchange);
+        UUID user_id = authService.validateToken(exchange); //chk token validity and get user id
         if(user_id==null){return;}
 
         String path = exchange.getRequestURI().getPath();
         String[] tmpValues = path.split("/");
 
         try{
-            UUID rating_id = UUID.fromString(tmpValues[tmpValues.length-1]);
+            UUID rating_id = UUID.fromString(tmpValues[tmpValues.length-1]);    //if rating id in uri get specific rating
             Rating rating = (Rating) ratingRepository.getOne(rating_id);
 
             if(rating == null){
@@ -118,17 +127,26 @@ public class RatingService {
                 return;
             }
 
+            //chk for comment visibility flag
             if(!rating.getVis()) rating.setComment(null);
             jsonHelper.sendResponse(exchange, 200, rating);
 
         } catch (IllegalArgumentException exception){
-            if(Objects.equals(tmpValues[tmpValues.length - 1], "own")){
+            if(Objects.equals(tmpValues[tmpValues.length - 1], "own")){ //if uri contains own get ratings of user
                 List<Object> ratings = ratingRepository.getOwn(user_id);
+
+                if(ratings.isEmpty()){
+                    jsonHelper.sendError(exchange, 404, "Media not found");
+                    return;
+                }
+
+                //no visibility chk for ratings if user is creator
                 jsonHelper.sendResponse(exchange, 200, ratings);
                 return;
             }
             List<Object> ratings = ratingRepository.getAll();
 
+            //chk comments visibility
             for(Object r : ratings){
                 if(r instanceof Rating rating){
                     if(!rating.getVis()) rating.setComment(null);
@@ -140,9 +158,10 @@ public class RatingService {
     }
 
     public void update(HttpExchange exchange) throws IOException, SQLException {
-        UUID user_id = authService.validateToken(exchange);
+        UUID user_id = authService.validateToken(exchange); //chk token validity and get user id
         if(user_id==null){return;}
 
+        //chk whether request has body
         InputStream is  = exchange.getRequestBody();
         if(is.available() == 0){
             jsonHelper.sendError(exchange, 400, "request body is empty");
@@ -151,6 +170,7 @@ public class RatingService {
 
         Map<String, String> request = jsonHelper.parseRequest(exchange, Map.class);
 
+        //get rating id from request and parse to UUID, chk for null
         UUID ratingId = null;
         String id = request.get("rating_id");
         if (id != null) {
@@ -174,6 +194,7 @@ public class RatingService {
         }
 
         //get info from exchange if authorised
+        //get starValue parse to int, chk for null
         Integer starValue = null;
         String value = request.get("starValue");
         if (value != null) {
@@ -183,10 +204,12 @@ public class RatingService {
                 jsonHelper.sendError(exchange, 400, "correct input required");
                 return;
             }
+        } else {
+            jsonHelper.sendError(exchange, 400, "correct input required");
+            return;
         }
 
-        String comment = request.get("comment");
-
+        //get visibility flag for comment parse to bool, chk for null
         Boolean visFlag = null;
         String vis = request.get("vis");
         if (vis != null) {
@@ -196,24 +219,18 @@ public class RatingService {
                 jsonHelper.sendError(exchange, 400, "correct input required");
                 return;
             }
-        }
-
-        UUID creator = user_id;
-
-        //validate input
-        if (comment == null || comment.trim().isEmpty() ||
-            starValue == null || /*likes == null ||*/ visFlag == null) {
-            jsonHelper.sendError(exchange, 400, "Correct input required");
+        } else {
+            jsonHelper.sendError(exchange, 400, "correct input required");
             return;
         }
 
-        if (comment.length() > 100) {
+        String comment = request.get("comment");
+        if (comment.length() > 100) {   //chk comment length
             jsonHelper.sendError(exchange, 400, "input too long");
             return;
         }
 
-        UUID mediaId = null;
-        Rating rating = new Rating(ratingId, creator, mediaId, starValue, comment/*, likes*/, visFlag);
+        Rating rating = new Rating(ratingId, user_id, null, starValue, comment, visFlag);
 
         //call repo function
         ratingRepository.update(rating);
@@ -223,7 +240,7 @@ public class RatingService {
     }
 
     public void delete(HttpExchange exchange) throws IOException, SQLException {
-        UUID user_id = authService.validateToken(exchange);
+        UUID user_id = authService.validateToken(exchange); //chk token validity and get user id
         if(user_id==null){return;}
 
         //get info from exchange
@@ -231,7 +248,7 @@ public class RatingService {
         String[] tmpValues = path.split("/");
         UUID rating_id = null;
         try{
-            rating_id = UUID.fromString(tmpValues[tmpValues.length-1]);
+            rating_id = UUID.fromString(tmpValues[tmpValues.length-1]); //chk whether UUID in uri
         } catch (IllegalArgumentException exception){
             jsonHelper.sendError(exchange, 400, "rating Id required");
             return;
@@ -258,9 +275,10 @@ public class RatingService {
     }
 
     public void like (HttpExchange exchange) throws IOException, SQLException {
-        UUID user_id = authService.validateToken(exchange);
+        UUID user_id = authService.validateToken(exchange); //chk token validity and get user id
         if(user_id==null){return;}
 
+        //chk whether body is empty
         InputStream is  = exchange.getRequestBody();
         if(is.available() == 0){
             jsonHelper.sendError(exchange, 400, "request body is empty");
@@ -270,6 +288,7 @@ public class RatingService {
         //get info from exchange
         Map<String, String> request = jsonHelper.parseRequest(exchange, Map.class);
 
+        //get rating id and parse to UUID, chk for null
         UUID rating_id = null;
         String rating = request.get("rating_id");
         if (rating != null) {
@@ -298,14 +317,14 @@ public class RatingService {
     }
 
     public void cntLikes(HttpExchange exchange) throws IOException, SQLException{
-        if(authService.validateToken(exchange) == null) {return;}
+        if(authService.validateToken(exchange) == null) {return;}   //chk token validity
 
         String path = exchange.getRequestURI().getPath();
         String[] tmpValues = path.split("/");
 
         try{
-            UUID rating_id = UUID.fromString(tmpValues[tmpValues.length-1]);
-            NumValue likesCnt = new NumValue(ratingRepository.getCntOfLikes(rating_id));
+            UUID rating_id = UUID.fromString(tmpValues[tmpValues.length-1]);    //chk for UUID in uri
+            NumValue likesCnt = new NumValue(ratingRepository.getCntOfLikes(rating_id));    //cnt likes for rating
 
             jsonHelper.sendResponse(exchange, 200, likesCnt);
 
@@ -315,14 +334,15 @@ public class RatingService {
     }
 
     private void removeElement(List<String> list, String element) {
+        //remove specifiy element from list
         int index;
-        while ((index = list.indexOf(element)) >= 0) {
+        while ((index = list.indexOf(element)) >= 0) {  //get index of specific element
             list.remove(index);
         }
     }
 
     public void getLeaderboard(HttpExchange exchange) throws IOException, SQLException{
-        if(authService.validateToken(exchange) == null) {return;}
+        if(authService.validateToken(exchange) == null) {return;}   //chk token validity
 
         List<Object> ratings = ratingRepository.getAll();
         List<String> users = new ArrayList<String>();
@@ -330,21 +350,22 @@ public class RatingService {
         String second = null;
         String third = null;
 
-
+        //get all users who have rated
         for(Object r : ratings){
             if(r instanceof Rating rating){
                 users.add(rating.getCreator().toString());
             }
         }
         MediaService mediaService = new MediaService();
-        first = mediaService.getMostFrequent(users);
-        removeElement(users, first);
+        first = mediaService.getMostFrequent(users);    //get user with most ratings
+        removeElement(users, first);    //remove user with most ratings
 
         if(!users.isEmpty()) {  //chk list isnt empty after removing elements
-            second = mediaService.getMostFrequent(users);
-            removeElement(users, second);
+            second = mediaService.getMostFrequent(users);   //get user with most ratings (out of list from which first place has been removed)
+            removeElement(users, second);   //remove user
         } else {
-            LeaderBoard leaderboard = new LeaderBoard(first, second, third);
+            //set second and third to null, if only one user has ratings
+            LeaderBoard leaderboard = new LeaderBoard(first, null, null);
             jsonHelper.sendResponse(exchange, 200, leaderboard);
             return;
         }
@@ -352,7 +373,8 @@ public class RatingService {
         if(!users.isEmpty()) {  //chk list isnt empty after removing elements
             third = mediaService.getMostFrequent(users);
         } else {
-            LeaderBoard leaderboard = new LeaderBoard(first, second, third);
+            //set third to null if only two users have ratings
+            LeaderBoard leaderboard = new LeaderBoard(first, second, null);
             jsonHelper.sendResponse(exchange, 200, leaderboard);
             return;
         }

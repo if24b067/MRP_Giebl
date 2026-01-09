@@ -103,6 +103,13 @@ public class RatingRepository implements Repository{
         return null;
     }
 
+    public List<Object> getAllOfMedia(UUID mediaId) throws SQLException {
+        //get all ratings from specific media entry
+        ResultSet rs = db.query("SELECT * FROM Ratings WHERE media_entry = ?", mediaId);
+
+        return parseRS(rs);
+    }
+
     public List<Object> getOwn(UUID id) throws SQLException {
         ResultSet rs = db.query("SELECT * FROM Ratings WHERE creator = ?", id);
 
