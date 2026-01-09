@@ -1,7 +1,9 @@
 package org.mrp.repositories;
 
+import org.mrp.models.LeaderBoard;
 import org.mrp.models.MediaEntry;
 import org.mrp.models.Rating;
+import org.mrp.models.User;
 import org.mrp.utils.Database;
 import org.mrp.utils.UUIDv7Generator;
 

@@ -29,6 +29,8 @@ public class RatingHandler implements HttpHandler {
                 ratingService.create(exchange);
             } else if (path.contains("/likes") && "GET".equals(method)) {
                     ratingService.cntLikes(exchange);
+            } else if (path.contains("/lb") && "GET".equals(method)) {
+                ratingService.getLeaderboard(exchange);
             } else if ("GET".equals(method)) {
                 ratingService.read(exchange);
             } else if ("PUT".equals(method)) {

@@ -62,7 +62,7 @@ public class RatingServiceTest {
         // Arrange
         UUID userId = UUID.randomUUID();
         when(authService.validateToken(exchange)).thenReturn(userId);
-        when(exchange.getRequestURI()).thenReturn(new URI("/ratings"));
+        when(exchange.getRequestURI()).thenReturn(new URI("/ratings/own"));
         when(ratingRepository.getOwn(userId)).thenReturn(Collections.singletonList(new Rating()));
 
         // Act

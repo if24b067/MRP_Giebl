@@ -2,6 +2,7 @@ package org.mrp.services;
 
 import com.sun.net.httpserver.HttpExchange;
 import org.mrp.models.MediaEntry;
+import org.mrp.models.NumValue;
 import org.mrp.models.Rating;
 import org.mrp.repositories.MediaRepository;
 import org.mrp.repositories.RatingRepository;
@@ -262,9 +263,8 @@ public class MediaService {
                     sum += rating.getStarValue();
                 }
             }
-            float score = sum/response.size();
-            //TODO: correct Json response
-            String avgScore = jsonHelper.toJson(score);
+            NumValue avgScore = new NumValue(sum/response.size());
+
             jsonHelper.sendResponse(exchange, 200, avgScore);
 
         } catch (IllegalArgumentException exception){
@@ -373,42 +373,7 @@ public class MediaService {
 
     }
 
-//    public void getRecommendations(HttpExchange exchange) throws IOException, SQLException {
-//        UUID user_id = authService.validateToken(exchange);
-//        if(user_id==null){return;}
-//
-//        List<Object> favourites = mediaRepository.getFav(user_id);
-//        List<String> genres = new ArrayList<>();
-//        for( Object f : favourites){
-//            if(f instanceof Fav fav){
-//                //UUID id = fav.getEntry_id();
-//                MediaEntry entry = (MediaEntry) mediaRepository.getOne(fav.getEntry_id());
-//                genres.addAll(entry.getGenres());
-//            }
-//        }
-//
-//        //determine most frequent genre
-//        Map<String, Integer> genreCount = new HashMap<>();
-//
-//        for (String genre : genres) {
-//            genreCount.put(genre, genreCount.getOrDefault(genre, 0) + 1);
-//        }
-//
-//        String mostFrequentGenre = null;
-//        int maxCount = 0;
-//
-//        for (Map.Entry<String, Integer> entry : genreCount.entrySet()) {
-//            if (entry.getValue() > maxCount) {
-//                maxCount = entry.getValue();
-//                mostFrequentGenre = entry.getKey();
-//            }
-//        }
-//
-//        List<Object> recommendations = mediaRepository.getByGenre(mostFrequentGenre);
-//        JsonHelper.sendResponse(exchange, 200, recommendations);
-//    }
-
-    private String getMostFrequent(List<String> attribute) {
+    public String getMostFrequent(List<String> attribute) {
         Map<String, Integer> genreCount = new HashMap<>();
         for (String a : attribute) {
             genreCount.put(a, genreCount.getOrDefault(a, 0) + 1);

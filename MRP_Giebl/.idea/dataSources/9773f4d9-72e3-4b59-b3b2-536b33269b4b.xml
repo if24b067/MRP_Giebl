@@ -12,7 +12,7 @@
 4||10|C|G
 4||10|T|G</Grants>
       <ServerVersion>16.10</ServerVersion>
-      <StartupTime>1765983005</StartupTime>
+      <StartupTime>1767947455</StartupTime>
       <TimeZones>true ACDT
 true ACSST
 false ACST
@@ -4186,26 +4186,26 @@ false posixrules
     <foreign-key id="272" parent="265" name="favourites_media_entry_fkey">
       <ColNames>media_entry</ColNames>
       <NameSurrogate>1</NameSurrogate>
+      <ObjectId>24606</ObjectId>
+      <StateNumber>886</StateNumber>
+      <RefKeyColPositions>1</RefKeyColPositions>
+      <RefTableId>16394</RefTableId>
+    </foreign-key>
+    <foreign-key id="273" parent="265" name="favourites_media_entry_fkey">
+      <ColNames>media_entry</ColNames>
+      <NameSurrogate>1</NameSurrogate>
       <ObjectId>24581</ObjectId>
       <StateNumber>830</StateNumber>
       <RefKeyColPositions>1</RefKeyColPositions>
       <RefTableId>16394</RefTableId>
     </foreign-key>
-    <foreign-key id="273" parent="265" name="favourites_user_id_fkey">
+    <foreign-key id="274" parent="265" name="favourites_user_id_fkey">
       <ColNames>user_id</ColNames>
       <NameSurrogate>1</NameSurrogate>
       <ObjectId>24586</ObjectId>
       <StateNumber>830</StateNumber>
       <RefKeyColPositions>1</RefKeyColPositions>
       <RefTableId>16385</RefTableId>
-    </foreign-key>
-    <foreign-key id="274" parent="265" name="favourites_media_entry_fkey">
-      <ColNames>media_entry</ColNames>
-      <NameSurrogate>1</NameSurrogate>
-      <ObjectId>24606</ObjectId>
-      <StateNumber>886</StateNumber>
-      <RefKeyColPositions>1</RefKeyColPositions>
-      <RefTableId>16394</RefTableId>
     </foreign-key>
     <index id="275" parent="265" name="favourites_pkey">
       <ColNames>fav_id</ColNames>

@@ -1,7 +1,10 @@
 package org.mrp.services;
 
 import com.sun.net.httpserver.HttpExchange;
+import org.mrp.models.LeaderBoard;
+import org.mrp.models.NumValue;
 import org.mrp.models.Rating;
+import org.mrp.models.User;
 import org.mrp.repositories.RatingRepository;
 import org.mrp.utils.JsonHelper;
 
@@ -289,9 +292,8 @@ public class RatingService {
 
         //call repo function
         ratingRepository.like(user_id, rating_id);
-        int likes = ratingRepository.getCntOfLikes(rating_id);
+        NumValue likes = new NumValue(ratingRepository.getCntOfLikes(rating_id));
 
-        //TODO correct JSON response
         jsonHelper.sendResponse(exchange, 201, likes);
     }
 
@@ -303,13 +305,59 @@ public class RatingService {
 
         try{
             UUID rating_id = UUID.fromString(tmpValues[tmpValues.length-1]);
-            int likesCnt = ratingRepository.getCntOfLikes(rating_id);
+            NumValue likesCnt = new NumValue(ratingRepository.getCntOfLikes(rating_id));
 
-            //TODO correct JSON response
             jsonHelper.sendResponse(exchange, 200, likesCnt);
 
         } catch (IllegalArgumentException exception){
             jsonHelper.sendError(exchange, 400, "invalid input");
         }
+    }
+
+    private void removeElement(List<String> list, String element) {
+        int index;
+        while ((index = list.indexOf(element)) >= 0) {
+            list.remove(index);
+        }
+    }
+
+    public void getLeaderboard(HttpExchange exchange) throws IOException, SQLException{
+        if(authService.validateToken(exchange) == null) {return;}
+
+        List<Object> ratings = ratingRepository.getAll();
+        List<String> users = new ArrayList<String>();
+        String first = null;
+        String second = null;
+        String third = null;
+
+
+        for(Object r : ratings){
+            if(r instanceof Rating rating){
+                users.add(rating.getCreator().toString());
+            }
+        }
+        MediaService mediaService = new MediaService();
+        first = mediaService.getMostFrequent(users);
+        removeElement(users, first);
+
+        if(!users.isEmpty()) {  //chk list isnt empty after removing elements
+            second = mediaService.getMostFrequent(users);
+            removeElement(users, second);
+        } else {
+            LeaderBoard leaderboard = new LeaderBoard(first, second, third);
+            jsonHelper.sendResponse(exchange, 200, leaderboard);
+            return;
+        }
+
+        if(!users.isEmpty()) {  //chk list isnt empty after removing elements
+            third = mediaService.getMostFrequent(users);
+        } else {
+            LeaderBoard leaderboard = new LeaderBoard(first, second, third);
+            jsonHelper.sendResponse(exchange, 200, leaderboard);
+            return;
+        }
+
+        LeaderBoard leaderboard = new LeaderBoard(first, second, third);
+        jsonHelper.sendResponse(exchange, 200, leaderboard);
     }
 }
