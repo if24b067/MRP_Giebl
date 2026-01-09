@@ -50,6 +50,9 @@ public class MediaService {
                 jsonHelper.sendError(exchange, 400, "correct input required");
                 return;
             }
+        } else {
+            jsonHelper.sendError(exchange, 400, "correct input required");
+            return;
         }
 
         Integer ageRestriction = null;
@@ -61,6 +64,9 @@ public class MediaService {
                 jsonHelper.sendError(exchange, 400, "correct input required");
                 return;
             }
+        } else {
+            jsonHelper.sendError(exchange, 400, "correct input required");
+            return;
         }
 
         List<String> genres = null;

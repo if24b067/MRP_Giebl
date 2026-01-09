@@ -232,32 +232,10 @@ public class MediaRepository implements Repository{
         String mediaType = preferences.get(1);
         Integer ageRestriction = preferences.get(2) != null ? Integer.parseInt(preferences.get(2)) : null;
 
-        // Prepare the SQL statement
-        String query = "SELECT * FROM MediaEntries WHERE " +
-                "(genres LIKE ? OR ? IS NULL) " +
-                "AND (age_restriction = ? OR ? IS NULL) " +
-                "AND (type = ? OR ? IS NULL) " +
-                "LIMIT 5";
-
-        // Create a PreparedStatement
-        try (PreparedStatement stmt = db.getConnection().prepareStatement(query)) {
-            // Set the parameters
-            stmt.setString(1, genre);
-            stmt.setString(2, genre); // For NULL check
-            if (ageRestriction != null) {
-                stmt.setInt(3, ageRestriction);
-            } else {
-                stmt.setNull(3, Types.INTEGER); // Type for age_restriction
-            }
-            stmt.setObject(4, ageRestriction, Types.INTEGER); // For NULL check
-            if (mediaType != null) {
-                stmt.setString(5, mediaType);
-            } else {
-                stmt.setNull(5, Types.VARCHAR); // Type for media type
-            }
-            stmt.setObject(6, mediaType, Types.VARCHAR); // For NULL check
-
-            ResultSet rs = stmt.executeQuery();
+        ResultSet rs = db.query("SELECT * FROM MediaEntries WHERE genres LIKE ?  AND age_restriction = ? AND type = ? LIMIT 5",
+                genre,
+                ageRestriction,
+                mediaType);
 
             while (rs.next()) {
                 List<String> genres = parseGenresFromDB(rs.getString("genres"));
@@ -275,7 +253,6 @@ public class MediaRepository implements Repository{
 
                 mediaEntries.add(mediaEntry);
             }
-        }
 
         return new ArrayList<>(mediaEntries);
     }
