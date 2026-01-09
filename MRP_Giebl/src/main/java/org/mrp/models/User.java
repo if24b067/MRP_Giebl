@@ -38,6 +38,12 @@ public class User {
         favourites = null;
     }
 
+    public User(String username, String passwordHash) {
+        this.username = username;
+        this.passwordHash = passwordHash;
+        favourites = null;
+    }
+
     public UUID getId() { return id; }
 
     public String getUsername() { return username; }

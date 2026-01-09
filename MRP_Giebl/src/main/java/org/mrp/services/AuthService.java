@@ -22,16 +22,18 @@ public class AuthService {
         userRepository = new UserRepository();
     }
 
-    //function to validate token and return UUID user
+    //function to validate token and return UUID of user
     public UUID validateToken(HttpExchange exchange) throws SQLException, IOException {
-        String authHeader = exchange.getRequestHeaders().getFirst("Authorization");
+        String authHeader = exchange.getRequestHeaders().getFirst("Authorization"); //get auth header
 
+        //validate auth header
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
             return null;
         }
 
         String token = authHeader.substring(7); //remove "Bearer "
 
+        //chk whether token validity
         UUID user_id = userRepository.chkToken(token);
         if (user_id == null) {
             jsonHelper.sendError(exchange, 401, "invalid token");
@@ -42,27 +44,33 @@ public class AuthService {
     }
 
     public void register (HttpExchange exchange) throws IOException, SQLException {
+        //get info from exchange
         Map<String, String> request = jsonHelper.parseRequest(exchange, HashMap.class);
         String username = request.get("username");
         String password = request.get("password");
 
-        //validate input
+        /* validate input */
+
+        //chk whether username already exists
         if(userRepository.chkUsername(username)) {
             jsonHelper.sendError(exchange, 400, "Username already exists");
             return;
         }
 
+        //chk whether required input was sent
         if (username == null || username.trim().isEmpty() ||
                 password == null || password.trim().isEmpty()) {
             jsonHelper.sendError(exchange, 400, "Username and password are required");
             return;
         }
 
+        //chk username length
         if (username.length() < 3 || username.length() > 50) {
             jsonHelper.sendError(exchange, 400, "Username must be between 3 and 50 characters");
             return;
         }
 
+        //chk password length
         if (password.length() < 6) {
             jsonHelper.sendError(exchange, 400, "Password must be at least 6 characters");
             return;
@@ -70,10 +78,8 @@ public class AuthService {
 
         //hash password
         String pwHash = BCrypt.withDefaults().hashToString(12, password.toCharArray());
-        //createMedia Timestamp
-        Timestamp createdAt = new Timestamp(System.currentTimeMillis());
 
-        User user = new User(username, pwHash, createdAt);
+        User user = new User(username, pwHash);
         UUID userId = userRepository.save(user);
 
 
@@ -85,28 +91,32 @@ public class AuthService {
     }
 
     public void login (HttpExchange exchange) throws IOException, SQLException {
+        //get info from exchange
         Map<String, String> request = jsonHelper.parseRequest(exchange, HashMap.class);
         String username = request.get("username");
         String password = request.get("password");
 
 
-        //validate input
+        /* validate input */
+
+        //ensure required input was sent
         if (username == null || username.trim().isEmpty() ||
                 password == null || password.trim().isEmpty()) {
             jsonHelper.sendError(exchange, 400, "Username and password are required");
             return;
         }
 
+        //chk whether user exists and username and password match
         if(!userRepository.chkLogin(username, password)) {
             jsonHelper.sendError(exchange, 400, "Username or password are invalid");
             return;
         }
 
-
-        String token = username + "_" + UUID.randomUUID().toString();
+        //generate and save token
+        String token = username + "_" + UUID.randomUUID();
         userRepository.saveToken(token, username);
 
-        //response
+        //send token in response
         Map<String, Object> response = new HashMap<>();
         response.put("token", token);
 
@@ -114,7 +124,7 @@ public class AuthService {
     }
 
     public void read(HttpExchange exchange) throws IOException, SQLException {
-        UUID user_id = validateToken(exchange);
+        UUID user_id = validateToken(exchange); //chk validity of token and get user id
         if(user_id==null){return;}
 
         User user = (User) userRepository.getOne(user_id);
@@ -123,20 +133,23 @@ public class AuthService {
     }
 
     public void update(HttpExchange exchange) throws IOException, SQLException {
-        UUID user_id = validateToken(exchange);
+        UUID user_id = validateToken(exchange); //chk validity of token and get user id
         if(user_id==null){return;}
 
+        //chk whether request body is empty
         InputStream is  = exchange.getRequestBody();
         if(is.available() == 0){
             jsonHelper.sendError(exchange, 400, "request body is empty");
             return;
         }
 
+        //get info from request
         Map<String, String> request = jsonHelper.parseRequest(exchange, Map.class);
         String passwordOld = request.get("password_old");
         String username = request.get("username");
         String passwordNew = request.get("password_new");
 
+        //chk whether required input was sent
         if(username == null || username.trim().isEmpty() ||
         passwordNew == null || passwordNew.trim().isEmpty() ||
         passwordOld == null || passwordOld.trim().isEmpty()){
@@ -152,10 +165,10 @@ public class AuthService {
             return;
         }
 
+        //hash new password
         String pwHash = BCrypt.withDefaults().hashToString(12, passwordNew.toCharArray());
 
         User user = new User(user_id, username, pwHash);
-
         userRepository.update(user);
 
         Map<String, Object> response = new HashMap<>();
@@ -165,7 +178,7 @@ public class AuthService {
     }
 
     public void delete(HttpExchange exchange) throws IOException, SQLException {
-        UUID user_id = validateToken(exchange);
+        UUID user_id = validateToken(exchange); //chk validity of token and get user id
         if(user_id==null){return;}
 
         User user = (User) userRepository.getOne(user_id);

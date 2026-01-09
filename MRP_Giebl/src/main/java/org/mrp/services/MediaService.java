@@ -1,6 +1,7 @@
 package org.mrp.services;
 
 import com.sun.net.httpserver.HttpExchange;
+import org.mrp.models.Fav;
 import org.mrp.models.MediaEntry;
 import org.mrp.models.NumValue;
 import org.mrp.models.Rating;

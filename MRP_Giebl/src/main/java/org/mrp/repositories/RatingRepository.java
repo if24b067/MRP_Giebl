@@ -1,9 +1,6 @@
 package org.mrp.repositories;
 
-import org.mrp.models.LeaderBoard;
-import org.mrp.models.MediaEntry;
 import org.mrp.models.Rating;
-import org.mrp.models.User;
 import org.mrp.utils.Database;
 import org.mrp.utils.UUIDv7Generator;
 
@@ -13,15 +10,35 @@ import java.time.LocalDate;
 import java.util.*;
 
 public class RatingRepository implements Repository{
-    private UUIDv7Generator uuidGenerator;
     private Database db;
 
     public RatingRepository() {
-        uuidGenerator = new UUIDv7Generator();
         db = new Database();
     }
 
-    //save information in db
+    private List<Object> parseRS(ResultSet rs) throws SQLException {
+        //method to avoid redundancies
+        List<Rating> ratings = new ArrayList<>();
+
+        while (rs.next()) {
+
+            Rating rating = new Rating(
+                    (UUID) rs.getObject("rating_id"),
+                    (UUID) rs.getObject("creator"),
+                    (UUID) rs.getObject("media_entry"),
+                    rs.getInt("star_value"),
+                    rs.getString("comment"),
+                    rs.getTimestamp("created_at"),
+                    rs.getBoolean("vis_flag")
+            );
+
+            ratings.add(rating);
+        }
+
+        return new ArrayList<Object>(ratings);
+    }
+
+    //save rating in db
     @Override
     public <T> UUID save(T t) throws SQLException {
         UUID rating_id = null;
@@ -61,31 +78,13 @@ public class RatingRepository implements Repository{
 
     @Override
     public List<Object> getAll() throws SQLException {
-        List<Rating> ratings = new ArrayList<>();
         ResultSet rs = db.query("SELECT * FROM Ratings");
 
-        while (rs.next()) {
-
-            Rating rating = new Rating(
-                (UUID) rs.getObject("rating_id"),
-                (UUID) rs.getObject("creator"),
-                (UUID) rs.getObject("media_entry"),
-                rs.getInt("star_value"),
-                rs.getString("comment"),
-                rs.getTimestamp("created_at"),
-                rs.getBoolean("vis_flag")
-            );
-
-            ratings.add(rating);
-        }
-
-        return new ArrayList<Object>(ratings);
+        return parseRS(rs);
     }
 
     @Override
     public Object getOne(UUID id) throws SQLException {
-        //db.update("CREATE TABLE Likes ( like_id UUID PRIMARY KEY, rating_id UUID, user_id UUID, FOREIGN KEY (rating_id) REFERENCES Ratings(rating_id), FOREIGN KEY (user_id) REFERENCES Users(user_id));");
-
         ResultSet rs = db.query("SELECT * FROM Ratings WHERE rating_id = ?", id);
 
         if(rs.next())
@@ -105,25 +104,9 @@ public class RatingRepository implements Repository{
     }
 
     public List<Object> getOwn(UUID id) throws SQLException {
-        List<Rating> ratings = new ArrayList<>();
         ResultSet rs = db.query("SELECT * FROM Ratings WHERE creator = ?", id);
 
-        while (rs.next()) {
-
-            Rating rating = new Rating(
-                    (UUID) rs.getObject("rating_id"),
-                    (UUID) rs.getObject("creator"),
-                    (UUID) rs.getObject("media_entry"),
-                    rs.getInt("star_value"),
-                    rs.getString("comment"),
-                    rs.getTimestamp("created_at"),
-                    rs.getBoolean("vis_flag")
-            );
-
-            ratings.add(rating);
-        }
-
-        return new ArrayList<Object>(ratings);
+        return parseRS(rs);
     }
 
 
@@ -133,10 +116,11 @@ public class RatingRepository implements Repository{
         if(!rs.next()) {return false;}  //rating not found
         String creatorId = rs.getString("creator");
         String userId = user_id.toString();
-        return Objects.equals(userId, creatorId);
+        return Objects.equals(userId, creatorId);   //chk whether creatorId is provided userId
     }
 
     public boolean chkUserAndMedia(UUID user_id, UUID media_id) throws SQLException {
+        //chk whether user has alredy rated mediaentry
         return db.exists("SELECT * FROM ratings WHERE creator = ? AND media_entry = ?",
                  user_id,
                  media_id
@@ -144,6 +128,7 @@ public class RatingRepository implements Repository{
     }
 
     public boolean chkUserAndRating(UUID user_id, UUID rating_id) throws SQLException {
+        //chk whether user has already liked rating
         return db.exists("SELECT * FROM likes WHERE user_id = ? AND rating_id = ?",
                 user_id,
                 rating_id
