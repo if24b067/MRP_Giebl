@@ -41,8 +41,6 @@ public class MediaHandler implements HttpHandler {
                 mediaService.sort(exchange, 't');
             } else if (path.endsWith("sortY") && "GET".equals(method)) {
                 mediaService.sort(exchange, 'y');
-            } else if (path.endsWith("sortS") && "GET".equals(method)) {
-                mediaService.sortByScore(exchange);
             } else if (path.contains("search") && "GET".equals(method)) {
                     mediaService.searchByTitle(exchange);
             } else if ("GET".equals(method)) {
