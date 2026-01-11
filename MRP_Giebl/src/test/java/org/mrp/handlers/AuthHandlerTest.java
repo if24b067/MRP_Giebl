@@ -30,6 +30,7 @@ public class AuthHandlerTest {
     @Test   //test register handling
     public void testHandleRegister() throws IOException, SQLException, URISyntaxException {
         URI uri = new URI("/register");
+        //mock expected behaviour
         when(exchange.getRequestURI()).thenReturn(uri);
         when(exchange.getRequestMethod()).thenReturn("POST");
 
@@ -41,6 +42,7 @@ public class AuthHandlerTest {
     @Test   //test login handling
     public void testHandleLogin() throws IOException, SQLException, URISyntaxException {
         URI uri = new URI("/login");
+        //mock expected behaviour
         when(exchange.getRequestURI()).thenReturn(uri);
         when(exchange.getRequestMethod()).thenReturn("POST");
 
@@ -52,50 +54,36 @@ public class AuthHandlerTest {
     @Test   //test read handling
     public void testHandleRead() throws IOException, SQLException, URISyntaxException {
         URI uri = new URI("/somePath");
+        //mock expected behaviour
         when(exchange.getRequestURI()).thenReturn(uri);
         when(exchange.getRequestMethod()).thenReturn("GET");
 
         authHandler.handle(exchange);
 
-        verify(authService).read(exchange);
+        verify(authService).read(exchange); //chk whether correct function called
     }
 
     @Test   //test update handling
     public void testHandleUpdate() throws IOException, SQLException, URISyntaxException {
         URI uri = new URI("/somePath");
+        //mock expected behaviour
         when(exchange.getRequestURI()).thenReturn(uri);
         when(exchange.getRequestMethod()).thenReturn("PUT");
 
         authHandler.handle(exchange);
 
-        verify(authService).update(exchange);
+        verify(authService).update(exchange);   //chk whether correct function called
     }
 
     @Test   //test delete handling
     public void testHandleDelete() throws IOException, SQLException, URISyntaxException {
         URI uri = new URI("/somePath");
+        //mock expected behaviour
         when(exchange.getRequestURI()).thenReturn(uri);
         when(exchange.getRequestMethod()).thenReturn("DELETE");
 
         authHandler.handle(exchange);
 
-        verify(authService).delete(exchange);
+        verify(authService).delete(exchange);   //chk whether correct function called
     }
-
-//    @Test   //test handling of SQL Exceptions
-//    public void testHandleSQLException() throws IOException, SQLException, URISyntaxException {
-//        URI uri = new URI("/register");
-//        when(exchange.getRequestURI()).thenReturn(uri);
-//        when(exchange.getRequestMethod()).thenReturn("POST");
-//
-//        Headers headers = new Headers();    //mock response headers
-//        when(exchange.getResponseHeaders()).thenReturn(headers);
-//
-//        doThrow(new SQLException()).when(authService).register(exchange);
-//
-//        authHandler.handle(exchange);
-//
-//        verify(exchange).sendResponseHeaders(eq(500), anyLong());   //chk for correct status code
-//    }
-
 }

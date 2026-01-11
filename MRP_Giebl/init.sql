@@ -21,7 +21,7 @@ CREATE TABLE MediaEntries (
     release_year INT NOT NULL,
     age_restriction INT NOT NULL,
     genres VARCHAR(255),
-    FOREIGN KEY (creator) REFERENCES Users(user_id)
+    FOREIGN KEY (creator) REFERENCES Users(user_id) ON DELETE CASCADE
 );
 
 -- Create Ratings table
@@ -33,17 +33,17 @@ CREATE TABLE Ratings (
     comment VARCHAR(255),
     created_at TIMESTAMP NOT NULL,
     vis_flag BOOLEAN,
-    FOREIGN KEY (creator) REFERENCES Users(user_id),
-    FOREIGN KEY (media_entry) REFERENCES MediaEntries(media_id)
+    FOREIGN KEY (creator) REFERENCES Users(user_id) ON DELETE CASCADE,
+    FOREIGN KEY (media_entry) REFERENCES MediaEntries(media_id) ON DELETE CASCADE
 );
 
--- Create Likes table       TODO remove likes
+-- Create Likes table
 CREATE TABLE Likes (
     like_id UUID PRIMARY KEY,
     rating_id UUID,
     user_id UUID,
-    FOREIGN KEY (rating_id) REFERENCES Ratings(rating_id),
-    FOREIGN KEY (user_id) REFERENCES Users(user_id)
+    FOREIGN KEY (rating_id) REFERENCES Ratings(rating_id)  ON DELETE CASCADE,
+    FOREIGN KEY (user_id) REFERENCES Users(user_id) ON DELETE CASCADE
 );
 
 -- Create Favourites table
@@ -51,6 +51,6 @@ CREATE TABLE Favourites (
     fav_id UUID PRIMARY KEY,
     media_entry UUID,
     user_id UUID,
-    FOREIGN KEY (media_entry) REFERENCES MediaEntries(media_id),
-    FOREIGN KEY (user_id) REFERENCES Users(user_id)
+    FOREIGN KEY (media_entry) REFERENCES MediaEntries(media_id)  ON DELETE CASCADE,
+    FOREIGN KEY (user_id) REFERENCES Users(user_id)  ON DELETE CASCADE
 );

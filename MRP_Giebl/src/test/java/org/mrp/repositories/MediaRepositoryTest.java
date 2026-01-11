@@ -30,11 +30,12 @@ public class MediaRepositoryTest {
     @Test
     public void testSave() throws SQLException {
         MediaEntry mediaEntry = new MediaEntry(UUID.randomUUID(), "Title", "Description", UUID.randomUUID(), 2020, 18, Arrays.asList("Drama", "Thriller"), "Movie");
-
+        //mock expected behaviour
         when(dbMock.insert(anyString(), any(), any(), any(), any(), any(), any(), any())).thenReturn(mediaEntry.getId());
 
         UUID mediaId = mediaRepository.save(mediaEntry);
 
+        //chk whether function behaved as expected
         assertNotNull(mediaId);
         verify(dbMock).insert(eq("INSERT INTO MediaEntries (media_id, title, description, creator, release_year, age_restriction, genres, type) VALUES (?, ?, ?, ?, ?, ?, ?, ?)"),
                 eq(mediaEntry.getTitle()),
@@ -52,6 +53,7 @@ public class MediaRepositoryTest {
 
         mediaRepository.update(mediaEntry);
 
+        //chk whether function behaved as expected
         verify(dbMock).update(eq("UPDATE MediaEntries SET title = ?, description = ?, release_year = ?, age_restriction = ?, genres = ?, type = ? WHERE media_id = ?"),
                 eq(mediaEntry.getTitle()),
                 eq(mediaEntry.getDesc()),
@@ -68,17 +70,20 @@ public class MediaRepositoryTest {
 
         mediaRepository.delete(mediaId);
 
+        //chk whether function behaved as expected
         verify(dbMock).update(eq("DELETE FROM MediaEntries WHERE media_id = ?"), eq(mediaId));
     }
 
     @Test
     public void testGetAll() throws SQLException {
         MediaEntry mediaEntry = new MediaEntry(UUID.randomUUID(), "Title", "Description", UUID.randomUUID(), 2020, 18, Arrays.asList("Drama"), "Movie");
+        //mock expected behaviour
         ResultSet rs = createMockResultSet(List.of(mediaEntry));
         when(dbMock.query(anyString())).thenReturn(rs);
 
         List<Object> result = mediaRepository.getAll();
 
+        //chk whether function behaved as expected
         assertEquals(1, result.size());
         assertInstanceOf(MediaEntry.class, result.get(0));
         MediaEntry resultEntry = (MediaEntry) result.get(0);
@@ -89,11 +94,13 @@ public class MediaRepositoryTest {
     public void testGetOne() throws SQLException {
         UUID mediaId = UUID.randomUUID();
         MediaEntry mediaEntry = new MediaEntry(mediaId, "Title", "Description", UUID.randomUUID(), 2020, 18, Arrays.asList("Drama"), "Movie");
+        //mock expected behaviour
         ResultSet rs =  createMockResultSet(List.of(mediaEntry));
         when(dbMock.query(anyString(), eq(mediaId))).thenReturn(rs);
 
         Object result = mediaRepository.getOne(mediaId);
 
+        //chk whether function behaved as expected
         assertNotNull(result);
         assertInstanceOf(MediaEntry.class, result);
         MediaEntry resultEntry = (MediaEntry) result;
@@ -104,14 +111,16 @@ public class MediaRepositoryTest {
     public void testChkCreator() throws SQLException {
         UUID mediaId = UUID.randomUUID();
         UUID userId = UUID.randomUUID();
+        //mock expected behaviour
         ResultSet rs = createMockResultSetWithCreator(userId);
         when(dbMock.query(anyString(), eq(mediaId))).thenReturn(rs);
 
         boolean result = mediaRepository.chkCreator(mediaId, userId);
-
+        //chk whether function behaved as expected
         assertTrue(result);
     }
 
+    //help function to mock result set
     private ResultSet createMockResultSet(List<MediaEntry> mediaEntries) throws SQLException {
         ResultSet rs = mock(ResultSet.class);
 
@@ -130,6 +139,7 @@ public class MediaRepositoryTest {
         return rs;
     }
 
+    //help function to mock chk Creator db query
     private ResultSet createMockResultSetWithCreator(UUID userId) throws SQLException {
         ResultSet rs = mock(ResultSet.class);   //mock rs
 

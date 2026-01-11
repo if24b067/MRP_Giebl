@@ -43,7 +43,7 @@ Das Repository Interface enthält nur jene Methoden, welche mit Sicherheit von a
 ### Models erstellen
 - erster Entwurf der Model-Klassen ca. 2h
 - weiterer kontinuierlicher Ausbau ca. 2h
-- zusätzliche Models erstellen (Favourites, Leaderboard) ca. 1h
+- zusätzliche Models erstellen (Favourites, Leaderboard) ca. 3h
 ### Server und Services
 - Erstaufsetzen des Servers ca. 3h
 - grobe Planung von Services und Handlern 1h
@@ -51,14 +51,15 @@ Das Repository Interface enthält nur jene Methoden, welche mit Sicherheit von a
 - genauere Ausführung der Services ca. 5h
 - Erstellung von Repositories ca. 1h
 - Anpassung der Repositories ca. 2h
-- Erweitern der Repositories für zusätzliche Use Cases ca. 8h
-- Erweitern der Services für zusätzliche Use Cases ca. 12h
+- Erweitern der Repositories für zusätzliche Use Cases ca. 30h
+- Erweitern der Services für zusätzliche Use Cases ca. 35h
 ### Tests
 - anfängliches vertrautmachen mit Postman ca. 1h
 - Erstellung Postman Requests ca. 3h
 - schreiben Postman-Tests ca. 5h
+- überarbeiten von Postman-Tests ca. 5h
 - Test Strategie überlegen, einbinden von JUnit und Mockite, ca. 2h
-- schreiben Unit Tests ca. 8h
+- schreiben Unit Tests ca. 12h
 ### Datenbank
 - Docker installieren und Datenbank aufsetzen ca. 3h
 - Repositories bearbeiten um Datenbank zu nutzen ca. 7h

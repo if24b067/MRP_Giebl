@@ -2,7 +2,6 @@ package org.mrp.repositories;
 
 import org.mrp.models.Rating;
 import org.mrp.utils.Database;
-import org.mrp.utils.UUIDv7Generator;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -85,6 +84,39 @@ public class RatingRepository implements Repository{
 
     @Override
     public Object getOne(UUID id) throws SQLException {
+//        db.update("ALTER TABLE favourites DROP CONSTRAINT favourites_user_id_fkey;");
+//        db.update("ALTER TABLE favourites ADD CONSTRAINT favourites_user_id_fkey FOREIGN KEY (user_id) REFERENCES Users(user_id) ON DELETE CASCADE;");
+//        db.update("ALTER TABLE favourites DROP CONSTRAINT favourites_media_entry_fkey;");
+//        db.update("ALTER TABLE favourites ADD CONSTRAINT favourites_media_entry_fkey FOREIGN KEY (media_entry) REFERENCES MediaEntries(media_id) ON DELETE CASCADE;");
+//
+//        db.update("ALTER TABLE ratings DROP CONSTRAINT ratings_creator_fkey;");
+//        db.update("ALTER TABLE ratings ADD CONSTRAINT ratings_creator_fkey FOREIGN KEY (creator) REFERENCES Users(user_id) ON DELETE CASCADE;");
+//        db.update("ALTER TABLE ratings DROP CONSTRAINT ratings_media_entry_fkey;");
+//        db.update("ALTER TABLE ratings ADD CONSTRAINT ratings_media_entry_fkey FOREIGN KEY (media_entry) REFERENCES MediaEntries(media_id) ON DELETE CASCADE;");
+//
+//        db.update("ALTER TABLE mediaentries DROP CONSTRAINT mediaentries_creator_fkey;");
+//        db.update("ALTER TABLE mediaentries ADD CONSTRAINT mediaentries_creator_fkey FOREIGN KEY (creator) REFERENCES Users(user_id) ON DELETE CASCADE;");
+//
+//
+//        ResultSet test2 = db.query("SELECT\n" +
+//                "    conname AS constraint_name,\n" +
+//                "    conrelid::regclass AS table_name,\n" +
+//                "    a.attname AS column_name,\n" +
+//                "    confdeltype AS on_delete_action\n" +
+//                "FROM\n" +
+//                "    pg_constraint c\n" +
+//                "JOIN\n" +
+//                "    pg_attribute a ON a.attnum = ANY(c.conkey) AND a.attrelid = c.conrelid\n" +
+//                "WHERE\n" +
+//                "    c.contype = 'f';");
+//        int columnCount = test2.getMetaData().getColumnCount();
+//        while (test2.next()) {
+//            for (int i = 1; i <= columnCount; i++) {
+//                System.out.print(test2.getString(i) + "\t"); // Print each column's value
+//            }
+//            System.out.println(); // New line for the next row
+//        }
+
         ResultSet rs = db.query("SELECT * FROM Ratings WHERE rating_id = ?", id);
 
         if(rs.next())

@@ -2,7 +2,6 @@ package org.mrp.services;
 
 import com.sun.net.httpserver.HttpExchange;
 import org.mrp.models.LeaderBoard;
-import org.mrp.models.NumValue;
 import org.mrp.models.Rating;
 import org.mrp.repositories.RatingRepository;
 import org.mrp.utils.JsonHelper;
@@ -55,6 +54,7 @@ public class RatingService {
             }
         } else {
             jsonHelper.sendError(exchange, 400, "correct input required");
+            return;
         }
 
         UUID creator = user_id;
@@ -78,6 +78,7 @@ public class RatingService {
             }
         } else {
             jsonHelper.sendError(exchange, 400, "correct input required");
+            return;
         }
 
         //get visibility flag for comment and parse to bool, chk for null
@@ -92,6 +93,7 @@ public class RatingService {
             }
         } else {
             jsonHelper.sendError(exchange, 400, "correct input required");
+            return;
         }
 
         String comment = request.get("comment");
@@ -193,6 +195,12 @@ public class RatingService {
             return;
         }
 
+        //chk whether rating exists
+        if(ratingRepository.getOne(ratingId) == null) {
+            jsonHelper.sendError(exchange, 404, "rating not found");
+            return;
+        }
+
         //get info from exchange if authorised
         //get starValue parse to int, chk for null
         Integer starValue = null;
@@ -254,19 +262,19 @@ public class RatingService {
             return;
         }
 
-        //chk whether entry exists
-        Rating rating = (Rating) ratingRepository.getOne(rating_id);
-
-        if(rating == null) {
-            jsonHelper.sendError(exchange, 404, "Rating not found");
-            return;
-        }
-
         //chk whether User is creator
         boolean isCreator = ratingRepository.chkCreator(rating_id, user_id);
 
         if(!isCreator){
             jsonHelper.sendError(exchange, 401, "unauthorized to delete post");
+            return;
+        }
+
+        //chk whether entry exists
+        Rating rating = (Rating) ratingRepository.getOne(rating_id);
+
+        if(rating == null) {
+            jsonHelper.sendError(exchange, 404, "Rating not found");
             return;
         }
 
@@ -303,6 +311,12 @@ public class RatingService {
             return;
         }
 
+        //chk whether rating exists
+        if(ratingRepository.getOne(rating_id) == null) {
+            jsonHelper.sendError(exchange, 404, "rating not found");
+            return;
+        }
+
         //chk whether user has already liked rating
         if (ratingRepository.chkUserAndRating(user_id, rating_id)) {
             jsonHelper.sendError(exchange, 400, "already liked this rating");
@@ -311,9 +325,10 @@ public class RatingService {
 
         //call repo function
         ratingRepository.like(user_id, rating_id);
-        NumValue likes = new NumValue(ratingRepository.getCntOfLikes(rating_id));
+        Map<String, Object> response = new HashMap<>();
+        response.put("liked_rating", rating_id);
 
-        jsonHelper.sendResponse(exchange, 201, likes);
+        jsonHelper.sendResponse(exchange, 201, response);
     }
 
     public void cntLikes(HttpExchange exchange) throws IOException, SQLException{
@@ -324,9 +339,10 @@ public class RatingService {
 
         try{
             UUID rating_id = UUID.fromString(tmpValues[tmpValues.length-1]);    //chk for UUID in uri
-            NumValue likesCnt = new NumValue(ratingRepository.getCntOfLikes(rating_id));    //cnt likes for rating
+            Map<String, Object> response = new HashMap<>();
+            response.put("likes_cnt", ratingRepository.getCntOfLikes(rating_id));
 
-            jsonHelper.sendResponse(exchange, 200, likesCnt);
+            jsonHelper.sendResponse(exchange, 200, response);
 
         } catch (IllegalArgumentException exception){
             jsonHelper.sendError(exchange, 400, "invalid input");

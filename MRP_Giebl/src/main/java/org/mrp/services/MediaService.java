@@ -2,7 +2,6 @@ package org.mrp.services;
 
 import com.sun.net.httpserver.HttpExchange;
 import org.mrp.models.MediaEntry;
-import org.mrp.models.NumValue;
 import org.mrp.models.Rating;
 import org.mrp.repositories.MediaRepository;
 import org.mrp.repositories.RatingRepository;
@@ -276,9 +275,11 @@ public class MediaService {
                         sum += rating.getStarValue();
                     }
                 }
-                NumValue avgScore = new NumValue(sum/response.size());
+                Map<String, Object> resp = new HashMap<>();
+                resp.put("avgScore", sum/response.size());
+                //NumValue avgScore = new NumValue(sum/response.size());
 
-                jsonHelper.sendResponse(exchange, 200, avgScore);
+                jsonHelper.sendResponse(exchange, 200, resp);
                 return;
             }
 
@@ -377,7 +378,7 @@ public class MediaService {
         try{
             UUID media_id = UUID.fromString(tmpValues[tmpValues.length-1]); //get media id from uri
             if(!mediaRepository.chkFav(media_id, user_id)) {    //chk whether fav exists
-                jsonHelper.sendError(exchange, 404, "media entry not found");
+                jsonHelper.sendError(exchange, 404, "entry not found");
                 return;
             }
 

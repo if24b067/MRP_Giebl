@@ -4,7 +4,6 @@ import com.sun.net.httpserver.HttpExchange;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import com.sun.net.httpserver.Headers;
 import org.mockito.Mockito;
 import org.mrp.models.Rating;
 import org.mrp.repositories.RatingRepository;
@@ -15,10 +14,7 @@ import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.sql.SQLException;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 import static org.mockito.Mockito.*;
 import static org.junit.jupiter.api.Assertions.*;
@@ -38,44 +34,42 @@ public class RatingServiceTest {
         jsonHelper = Mockito.mock(JsonHelper.class);    //mock jsonHelper
         ratingService = new RatingService(ratingRepository, authService, jsonHelper); //pass mocked repo and service
         exchange = Mockito.mock(HttpExchange.class);    //mock HTTP exchange
-        requestBody = Mockito.mock(InputStream.class);
+        requestBody = Mockito.mock(InputStream.class);  //mock InputStream
     }
 
-    /* test read*/
+    /* test read function */
     @Test
     void testReadShouldReturnErrorWhenRatingNotFound() throws IOException, SQLException, URISyntaxException {
-        // Arrange
         UUID userId = UUID.randomUUID();
+        //mock expected behaviour
         when(authService.validateToken(exchange)).thenReturn(userId);
         when(exchange.getRequestURI()).thenReturn(new URI("/ratings/" + UUID.randomUUID()));
         when(ratingRepository.getOne(any())).thenReturn(null);
 
-        // Act
         ratingService.read(exchange);
 
-        // Assert
+        //chk whether function behaved as expected
         verify(jsonHelper).sendError(exchange, 404, "Media not found");
     }
 
     @Test
     void testReadShouldReturnOwnRatings() throws IOException, SQLException, URISyntaxException {
-        // Arrange
         UUID userId = UUID.randomUUID();
+        //mock expected behaviour
         when(authService.validateToken(exchange)).thenReturn(userId);
         when(exchange.getRequestURI()).thenReturn(new URI("/ratings/own"));
-        when(ratingRepository.getOwn(userId)).thenReturn(Collections.singletonList(new Rating()));
+        when(ratingRepository.getOwn(userId)).thenReturn(Arrays.asList(new Rating(), new Rating()));
 
-        // Act
         ratingService.read(exchange);
 
-        // Assert
+        //chk whether function behaved as expected
         verify(jsonHelper).sendResponse(eq(exchange), eq(200), anyList());
     }
 
     @Test
     void testReadShouldSetCommentToNullWhenNotVisible() throws IOException, SQLException, URISyntaxException {
-        // Arrange
         UUID userId = UUID.randomUUID();
+        //mock expected behaviour
         when(authService.validateToken(exchange)).thenReturn(userId);
         when(exchange.getRequestURI()).thenReturn(new URI("/ratings/" + UUID.randomUUID()));
         Rating rating = new Rating();
@@ -83,10 +77,9 @@ public class RatingServiceTest {
         rating.setComment("Visible Comment");
         when(ratingRepository.getOne(any())).thenReturn(rating);
 
-        // Act
         ratingService.read(exchange);
 
-        // Assert
+        //chk whether function behaved as expected
         assertNull(rating.getComment());
         verify(jsonHelper).sendResponse(eq(exchange), eq(200), eq(rating));
     }
@@ -94,72 +87,67 @@ public class RatingServiceTest {
     /* test update */
     @Test
     void testUpdateShouldReturnErrorWhenRequestBodyIsEmpty() throws IOException, SQLException {
-        // Arrange
         UUID userId = UUID.randomUUID();
+        //mock expected behaviour
         when(authService.validateToken(exchange)).thenReturn(userId);
         when(exchange.getRequestBody()).thenReturn(requestBody);
         when(requestBody.available()).thenReturn(0); // Simulate empty body
 
-        // Act
         ratingService.update(exchange);
 
-        // Assert
+        //chk whether function behaved as expected
         verify(jsonHelper).sendError(exchange, 400, "request body is empty");
     }
 
     @Test
     void testUpdateShouldReturnErrorWhenRatingIdIsNotPresent() throws IOException, SQLException {
-        // Arrange
         UUID userId = UUID.randomUUID();
+        //mock expected behaviour
         when(authService.validateToken(exchange)).thenReturn(userId);
         when(exchange.getRequestBody()).thenReturn(requestBody);
         when(requestBody.available()).thenReturn(1); // Simulate non-empty body
-        Map<String, String> requestMap = new HashMap<>();
+        Map<String, String> requestMap = new HashMap<>();   //map does not include rating id
         when(jsonHelper.parseRequest(exchange, Map.class)).thenReturn(requestMap);
 
-        // Act
         ratingService.update(exchange);
 
-        // Assert
+        //chk whether function behaved as expected
         verify(jsonHelper).sendError(exchange, 400, "correct input required");
     }
 
     @Test
     void testUpdateShouldReturnErrorWhenRatingIdIsInvalid() throws IOException, SQLException {
-        // Arrange
         UUID userId = UUID.randomUUID();
+        //mock expected behaviour
         when(authService.validateToken(exchange)).thenReturn(userId);
         when(exchange.getRequestBody()).thenReturn(requestBody);
         when(requestBody.available()).thenReturn(1);
         Map<String, String> requestMap = new HashMap<>();
-        requestMap.put("rating_id", "invalid-uuid");
+        requestMap.put("rating_id", "invalid-uuid");    //map includes invalid rating id
         when(jsonHelper.parseRequest(exchange, Map.class)).thenReturn(requestMap);
 
-        // Act
         ratingService.update(exchange);
 
-        // Assert
+        //chk whether function behaved as expected
         verify(jsonHelper).sendError(exchange, 400, "correct input required");
     }
 
     @Test
     void testUpdateShouldReturnErrorWhenUserIsNotCreator() throws IOException, SQLException {
-        // Arrange
         UUID userId = UUID.randomUUID();
         UUID ratingId = UUID.randomUUID();
+        //mock expected behaviour
         when(authService.validateToken(exchange)).thenReturn(userId);
         when(exchange.getRequestBody()).thenReturn(requestBody);
         when(requestBody.available()).thenReturn(1);
-
         Map<String, String> requestMap = new HashMap<>();
-        requestMap.put("rating_id", ratingId.toString());
+        requestMap.put("rating_id", ratingId.toString());   //map includes rating id
         when(jsonHelper.parseRequest(exchange, Map.class)).thenReturn(requestMap);
-        when(ratingRepository.chkCreator(ratingId, userId)).thenReturn(false);
+        when(ratingRepository.chkCreator(ratingId, userId)).thenReturn(false);  //user is not creator
 
-        // Act
         ratingService.update(exchange);
 
-        // Assert
+        //chk whether function behaved as expected
         verify(jsonHelper).sendError(exchange, 401, "unauthorized to edit post");
     }
 
@@ -167,28 +155,27 @@ public class RatingServiceTest {
     @Test
     void testDeleteShouldReturnErrorWhenRatingNotFound() throws IOException, SQLException, URISyntaxException {
         UUID userId = UUID.randomUUID();
+        //mock expected behaviour
         when(authService.validateToken(exchange)).thenReturn(userId);
         when(exchange.getRequestURI()).thenReturn(new URI("/ratings/" + UUID.randomUUID()));
+        when(ratingRepository.getOne(any())).thenReturn(null);  //not found
 
-        when(ratingRepository.getOne(any())).thenReturn(null);
-
-        // Act
         ratingService.delete(exchange);
 
-        // Assert
+        //chk whether function behaved as expected
         verify(jsonHelper).sendError(exchange, 404, "Rating not found");
     }
 
     @Test
     void testDeleteShouldReturnErrorWhenRatingIdIsNotPresent() throws IOException, SQLException, URISyntaxException {
         UUID userId = UUID.randomUUID();
+        //mock expected behaviour
         when(authService.validateToken(exchange)).thenReturn(userId);
-        when(exchange.getRequestURI()).thenReturn(new URI("/ratings/"));
+        when(exchange.getRequestURI()).thenReturn(new URI("/ratings/"));    //no rating id
 
-        // Act
         ratingService.delete(exchange);
 
-        // Assert
+        //chk whether function behaved as expected
         verify(jsonHelper).sendError(exchange, 400, "rating Id required");
     }
 
@@ -197,88 +184,82 @@ public class RatingServiceTest {
         UUID userId = UUID.randomUUID();
         UUID ratingId = UUID.randomUUID();
         Rating rating = new Rating();
-
+        //mock expected behaviour
         when(authService.validateToken(exchange)).thenReturn(userId);
-        when(exchange.getRequestURI()).thenReturn(new URI("/ratings/" + ratingId));
-        when(ratingRepository.getOne(ratingId)).thenReturn(rating);
-        when(ratingRepository.chkCreator(ratingId, userId)).thenReturn(false);
+        when(exchange.getRequestURI()).thenReturn(new URI("/ratings/" + ratingId)); //rating id present
+        when(ratingRepository.getOne(ratingId)).thenReturn(rating); //rating found
+        when(ratingRepository.chkCreator(ratingId, userId)).thenReturn(false);  //user not creator
 
-        // Act
         ratingService.delete(exchange);
 
-        // Assert
+        //chk whether function behaved as expected
         verify(jsonHelper).sendError(exchange, 401, "unauthorized to delete post");
     }
 
     /* test like */
     @Test
     void testLikeShouldReturnErrorWhenRequestBodyIsEmpty() throws IOException, SQLException {
-        // Arrange
         UUID userId = UUID.randomUUID();
+        //mock expected behaviour
         when(authService.validateToken(exchange)).thenReturn(userId);
         when(exchange.getRequestBody()).thenReturn(requestBody);
         when(requestBody.available()).thenReturn(0); // Simulate empty body
 
-        // Act
         ratingService.like(exchange);
 
-        // Assert
+        //chk whether function behaved as expected
         verify(jsonHelper).sendError(exchange, 400, "request body is empty");
     }
 
     @Test
     void testLikeShouldReturnErrorWhenRatingIdIsNotPresent() throws IOException, SQLException {
-        // Arrange
         UUID userId = UUID.randomUUID();
+        //mock expected behaviour
         when(authService.validateToken(exchange)).thenReturn(userId);
         when(exchange.getRequestBody()).thenReturn(requestBody);
         when(requestBody.available()).thenReturn(1); // Simulate non-empty body
-        Map<String, String> requestMap = new HashMap<>();
+        Map<String, String> requestMap = new HashMap<>();   //map does not include rating id
         when(jsonHelper.parseRequest(exchange, Map.class)).thenReturn(requestMap);
 
-        // Act
         ratingService.like(exchange);
 
-        // Assert
+        //chk whether function behaved as expected
         verify(jsonHelper).sendError(exchange, 400, "correct input required");
     }
 
     @Test
     void testLikeShouldReturnErrorWhenRatingIdIsInvalid() throws IOException, SQLException {
-        // Arrange
         UUID userId = UUID.randomUUID();
+        //mock expected behaviour
         when(authService.validateToken(exchange)).thenReturn(userId);
         when(exchange.getRequestBody()).thenReturn(requestBody);
-        when(requestBody.available()).thenReturn(1);
+        when(requestBody.available()).thenReturn(1);    //non empty body
         Map<String, String> requestMap = new HashMap<>();
-        requestMap.put("rating_id", "invalid-uuid");
+        requestMap.put("rating_id", "invalid-uuid");    //includes invalid rating id
         when(jsonHelper.parseRequest(exchange, Map.class)).thenReturn(requestMap);
 
-        // Act
         ratingService.like(exchange);
 
-        // Assert
+        //chk whether function behaved as expected
         verify(jsonHelper).sendError(exchange, 400, "correct input required");
     }
 
     @Test
     void testLikeShouldReturnErrorWhenUserHasAlreadyLiked() throws IOException, SQLException {
-        // Arrange
         UUID userId = UUID.randomUUID();
         UUID ratingId = UUID.randomUUID();
+        //mock expected behaviour
         when(authService.validateToken(exchange)).thenReturn(userId);
         when(exchange.getRequestBody()).thenReturn(requestBody);
-        when(requestBody.available()).thenReturn(1);
-
+        when(requestBody.available()).thenReturn(1);    //non empty body
         Map<String, String> requestMap = new HashMap<>();
-        requestMap.put("rating_id", ratingId.toString());
+        requestMap.put("rating_id", ratingId.toString());   //valid rating id
         when(jsonHelper.parseRequest(exchange, Map.class)).thenReturn(requestMap);
-        when(ratingRepository.chkUserAndRating(userId, ratingId)).thenReturn(true);
+        when(ratingRepository.chkUserAndRating(userId, ratingId)).thenReturn(true); //already liked
 
-        // Act
         ratingService.like(exchange);
 
-        // Assert
+        //chk whether function behaved as expected
         verify(jsonHelper).sendError(exchange, 400, "already liked this rating");
     }
 }
